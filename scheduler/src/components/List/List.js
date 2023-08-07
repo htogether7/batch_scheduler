@@ -6,9 +6,8 @@ const List = ({ jobs, setJobs }) => {
   useEffect(() => {
     axios.get("http://localhost:5050/job").then((res) => {
       setJobs(res.data);
-      console.log(res.data);
     });
-  }, []);
+  }, [jobs]);
 
   return (
     <>
