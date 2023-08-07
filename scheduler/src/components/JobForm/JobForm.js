@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 import "./JobForm.css";
 import TimeInput from "../TimeInput/TimeInput";
 import Objects from "../../Object";
@@ -56,7 +57,16 @@ const JobForm = ({ mode, setMode }) => {
     e.preventDefault();
     if (mode === "time") {
       if (validateTime(monthInput, dayInput, hourInput, minuteInput)) {
-        console.log(nameInput, monthInput, dayInput, hourInput, minuteInput);
+        axios
+          .post("http://localhost:5050/job", {
+            name: nameInput,
+            condition: conditionInput,
+            month: monthInput,
+            day: dayInput,
+            hour: hourInput,
+            minute: minuteInput,
+          })
+          .then((res) => console.log(res.data));
       } else {
         alert("조건을 다시한번 확인해주세요");
       }
