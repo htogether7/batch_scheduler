@@ -1,13 +1,24 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./List.css";
+import axios from "axios";
 
-const List = ({ jobList }) => {
+const List = ({ jobs, setJobs }) => {
+  useEffect(() => {
+    axios.get("http://localhost:5050/job").then((res) => {
+      setJobs(res.data);
+      console.log(res.data);
+    });
+  }, []);
+
   return (
     <>
-      <div>작업 목록</div>
+      <div>실행 대기중인 작업</div>
       <ul>
-        {jobList.map((job) => (
-          <li>{job}</li>
+        {jobs.map((job) => (
+          <li key={job.enrolled_time}>
+            {job.name} {job.pre_condition} {job.month} {job.day} {job.hour}{" "}
+            {job.minute}
+          </li>
         ))}
       </ul>
     </>

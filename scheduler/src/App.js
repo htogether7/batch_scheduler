@@ -6,10 +6,11 @@ import JobForm from "./components/JobForm/JobForm";
 import TermForm from "./components/TermForm/TermForm";
 
 function App() {
-  const [submittedJobs, setSubmittedJobs] = useState([1, 2, 3]);
+  const [submittedJobs, setSubmittedJobs] = useState([]);
   const [mode, setMode] = useState("time");
-  const term = useRef(1000);
   const [termInput, setTermInput] = useState(0);
+  // const [list, setList] = useState([]);
+  const term = useRef(1000);
 
   const infiniteCheck = async (term) => {
     const roofTerm = term;
@@ -22,14 +23,13 @@ function App() {
   };
 
   // 처음 마운트 되었을 때 DB로 부터 JobList를 불러옴
-
   useEffect(() => {
     infiniteCheck(term);
   }, [term]);
 
   return (
     <div className="App">
-      <List jobs={submittedJobs} />
+      <List jobs={submittedJobs} setJobs={setSubmittedJobs} />
       <TermForm term={term} termInput={termInput} setTermInput={setTermInput} />
       <JobForm mode={mode} setMode={setMode} />
     </div>

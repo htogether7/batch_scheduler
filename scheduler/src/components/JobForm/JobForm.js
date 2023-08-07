@@ -71,7 +71,6 @@ const JobForm = ({ mode, setMode }) => {
         alert("조건을 다시한번 확인해주세요");
       }
     } else {
-      console.log(conditionInput);
     }
   };
 
