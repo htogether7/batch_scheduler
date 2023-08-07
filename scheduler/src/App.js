@@ -6,17 +6,29 @@ import JobForm from "./components/JobForm/JobForm";
 import TermForm from "./components/TermForm/TermForm";
 
 function App() {
-  const [jobList, setJobList] = useState([1, 2]);
+  const [submittedJobs, setSubmittedJobs] = useState([1, 2, 3]);
   const [mode, setMode] = useState("time");
+  const [term, setTerm] = useState(1000);
+
+  const infiniteCheck = async (term) => {
+    while (true) {
+      await new Promise((r) => setTimeout(r, term)).then(() =>
+        console.log(`now term : ${term}, time : ${Date.now()}`)
+      );
+    }
+  };
 
   // 처음 마운트 되었을 때 DB로 부터 JobList를 불러옴
 
+  // useEffect(() => {
+  //   axios.get("http://localhost:5050/api").then((r) => console.log(r.data));
+  // });
   useEffect(() => {
-    axios.get("http://localhost:5050/api").then((r) => console.log(r.data));
+    infiniteCheck(term);
   });
   return (
     <div className="App">
-      <List jobList={jobList} />
+      <List jobs={submittedJobs} />
       <TermForm />
       <JobForm mode={mode} />
     </div>
