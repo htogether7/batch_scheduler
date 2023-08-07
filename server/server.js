@@ -49,18 +49,23 @@ connection.connect((err) => {
 //   });
 // });
 
-app.post("/job", (req, res) => {
-  console.log(req.body);
-  const sql = `insert into job_info values ("${new Date()
-    .toISOString()
-    .slice(0, 19)
-    .replace("T", " ")}","${req.body.name}","${req.body.condition}","${
-    req.body.month
-  }","${req.body.day}","${req.body.hour}","${req.body.minute}");`;
+app.get("/job", (req, res) => {
+  const sql = `select * from job_info;`;
   connection.query(sql, (err, result) => {
     if (err) throw err;
     else {
-      res.json(req.body);
+      res.json(result);
+    }
+  });
+});
+
+app.post("/job", (req, res) => {
+  const now = new Date().toISOString().slice(0, 19).replace("T", " ");
+  const sql = `insert into job_info values ("${now}","${req.body.name}","${req.body.condition}","${req.body.month}","${req.body.day}","${req.body.hour}","${req.body.minute}");`;
+  connection.query(sql, (err, result) => {
+    if (err) throw err;
+    else {
+      res.json({ ...req.body });
     }
   });
 });
