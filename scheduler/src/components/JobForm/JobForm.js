@@ -53,6 +53,8 @@ const JobForm = ({ mode, setMode }) => {
     return true;
   };
 
+  const validateCondition = () => {};
+
   const handleJobSubmit = (e) => {
     e.preventDefault();
     if (mode === "time") {
@@ -89,10 +91,15 @@ const JobForm = ({ mode, setMode }) => {
         <br></br>
         {mode === "time" ? (
           <>
-            <TimeInput id="month" content="월" func={setMonthInput} />
-            <TimeInput id="day" content="일" func={setDayInput} />
-            <TimeInput id="hour" content="시" func={setHourInput} />
-            <TimeInput id="minute" content="분" func={setMinuteInput} />
+            <TimeInput id="month" content="월" func={setMonthInput} required />
+            <TimeInput id="day" content="일" func={setDayInput} required />
+            <TimeInput id="hour" content="시" func={setHourInput} required />
+            <TimeInput
+              id="minute"
+              content="분"
+              func={setMinuteInput}
+              required
+            />
           </>
         ) : (
           <>
@@ -101,6 +108,7 @@ const JobForm = ({ mode, setMode }) => {
               id="conditionInput"
               type="text"
               onChange={handleConditionInput}
+              required
             />
           </>
         )}
