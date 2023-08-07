@@ -31,7 +31,7 @@ function App() {
     <div className="App">
       <List jobs={submittedJobs} />
       <TermForm term={term} termInput={termInput} setTermInput={setTermInput} />
-      <JobForm mode={mode} />
+      <JobForm mode={mode} setMode={setMode} />
     </div>
   );
 }
