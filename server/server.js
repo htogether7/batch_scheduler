@@ -45,12 +45,16 @@ app.post("/job", (req, res) => {
       null
     ,"${req.body.month}","${req.body.day}","${req.body.hour}","${req.body.minute}");`;
   } else {
-    sql = `insert into job_info values ("${req.body.enrolled_time}", "${req.body.name}", "${req.body.pre_condition}", null, null, null, null)`;
+    sql = `insert into job_info values ("${req.body.enrolled_time}", "${req.body.name}", "${req.body.pre_condition}", null, null, null, null);`;
   }
 
   connection.query(sql, (err, result) => {
     if (err) throw err;
     else {
+      const sql2 = `insert into flow values ("${req.body.enrolled_time}", "${req.body.pre_condition}")`;
+      connection.query(sql2, (err, result) => {
+        if (err) throw err;
+      });
       res.json({ ...req.body });
     }
   });
