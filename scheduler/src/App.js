@@ -40,6 +40,7 @@ function App() {
         mode={mode}
         setMode={setMode}
         selectedCondition={selectedCondition}
+        setSelectedCondition={setSelectedCondition}
         jobs={submittedJobs}
         setJobs={setSubmittedJobs}
       />

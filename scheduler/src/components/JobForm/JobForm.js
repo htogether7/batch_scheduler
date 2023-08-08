@@ -4,13 +4,20 @@ import "./JobForm.css";
 import TimeInput from "../TimeInput/TimeInput";
 import Objects from "../../Object";
 
-const JobForm = ({ mode, setMode, selectedCondition, jobs, setJobs }) => {
+const JobForm = ({
+  mode,
+  setMode,
+  selectedCondition,
+  setSelectedCondition,
+  jobs,
+  setJobs,
+}) => {
   const [monthInput, setMonthInput] = useState("");
   const [dayInput, setDayInput] = useState("");
   const [hourInput, setHourInput] = useState("");
   const [minuteInput, setMinuteInput] = useState("");
   const [nameInput, setNameInput] = useState("");
-  const [conditionInput, setConditionInput] = useState("");
+  // const [conditionInput, setConditionInput] = useState("");
 
   const handleTimeButton = () => {
     setMode("time");
@@ -25,7 +32,7 @@ const JobForm = ({ mode, setMode, selectedCondition, jobs, setJobs }) => {
   };
 
   const handleConditionInput = (e) => {
-    setConditionInput(e.target.value);
+    setSelectedCondition(e.target.value);
   };
 
   const validateTime = (month, day, hour, minute) => {
@@ -55,6 +62,7 @@ const JobForm = ({ mode, setMode, selectedCondition, jobs, setJobs }) => {
 
   const handleJobSubmit = (e) => {
     e.preventDefault();
+    const now = Date.now().toString();
     if (mode === "time") {
       if (validateTime(monthInput, dayInput, hourInput, minuteInput)) {
         axios
@@ -64,6 +72,7 @@ const JobForm = ({ mode, setMode, selectedCondition, jobs, setJobs }) => {
             day: dayInput,
             hour: hourInput,
             minute: minuteInput,
+            enrolled_time: now,
           })
           .then((res) => setJobs([...jobs, res.data]));
       } else {
@@ -73,9 +82,12 @@ const JobForm = ({ mode, setMode, selectedCondition, jobs, setJobs }) => {
       axios
         .post("http://localhost:5050/job", {
           name: nameInput,
-          condition: selectedCondition,
+          pre_condition: selectedCondition,
+          enrolled_time: now,
         })
-        .then((res) => setJobs([...jobs, res.data]));
+        .then((res) => {
+          setJobs([...jobs, res.data]);
+        });
     }
   };
 
