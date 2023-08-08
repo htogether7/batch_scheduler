@@ -1,13 +1,39 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./List.css";
 import axios from "axios";
 
-const List = ({ jobs, setJobs }) => {
+const List = ({ jobs, setJobs, mode, setSelectedCondition }) => {
+  // const [jobList, setJobList] = useState([]);
+  const handleLiClick = (e) => {
+    if (mode === "condition") {
+      setSelectedCondition(e.target.id);
+    }
+  };
+
+  const hasSameValue = (l1, l2) => {
+    if (l1.length !== l2.legnth) return false;
+    for (let index = 0; index < l1.length; index++) {
+      // l1[index];
+      for (let key of Object.keys(l1)) {
+        if (l1[index][key] !== l2[index][key]) return false;
+      }
+    }
+    return true;
+  };
+
   useEffect(() => {
-    axios.get("http://localhost:5050/job").then((res) => {
-      setJobs(res.data);
-    });
-  }, [jobs]);
+    const request = async () => {
+      // const prevJobs = jobs;
+      await axios.get("http://localhost:5050/job").then((res) => {
+        // if (prevJobs !== jobs) {
+        // if (!hasSameValue(prevJobs, res.data)) {
+        setJobs(res.data);
+        // }
+        // }
+      });
+    };
+    request();
+  }, []);
 
   return (
     <>
@@ -15,12 +41,15 @@ const List = ({ jobs, setJobs }) => {
       <ul>
         {jobs.map((job) => (
           <li key={job.enrolled_time}>
-            {job.name} {job.pre_condition} {job.month} {job.day} {job.hour}{" "}
-            {job.minute}
+            <div onClick={handleLiClick} id={job.enrolled_time}>
+              {job.name} {job.pre_condition} {job.month} {job.day} {job.hour}{" "}
+              {job.minute}
+            </div>
           </li>
         ))}
       </ul>
     </>
   );
 };
-export default List;
+
+export default React.memo(List);

@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./JobForm.css";
 import TimeInput from "../TimeInput/TimeInput";
 import Objects from "../../Object";
 
-const JobForm = ({ mode, setMode }) => {
+const JobForm = ({ mode, setMode, selectedCondition, jobs, setJobs }) => {
   const [monthInput, setMonthInput] = useState("");
   const [dayInput, setDayInput] = useState("");
   const [hourInput, setHourInput] = useState("");
@@ -53,8 +53,6 @@ const JobForm = ({ mode, setMode }) => {
     return true;
   };
 
-  const validateCondition = () => {};
-
   const handleJobSubmit = (e) => {
     e.preventDefault();
     if (mode === "time") {
@@ -66,9 +64,8 @@ const JobForm = ({ mode, setMode }) => {
             day: dayInput,
             hour: hourInput,
             minute: minuteInput,
-            accessable: mode === "time" ? 1 : 0,
           })
-          .then((res) => console.log(res.data));
+          .then((res) => setJobs([...jobs, res.data]));
       } else {
         alert("시간을 다시한번 확인해주세요");
       }
@@ -76,10 +73,9 @@ const JobForm = ({ mode, setMode }) => {
       axios
         .post("http://localhost:5050/job", {
           name: nameInput,
-          condition: conditionInput,
-          accessable: mode === "time" ? 1 : 0,
+          condition: selectedCondition,
         })
-        .then((res) => console.log(res.data));
+        .then((res) => setJobs([...jobs, res.data]));
     }
   };
 
@@ -116,6 +112,7 @@ const JobForm = ({ mode, setMode }) => {
               type="text"
               onChange={handleConditionInput}
               required
+              value={selectedCondition}
             />
           </>
         )}

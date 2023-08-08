@@ -9,7 +9,7 @@ function App() {
   const [submittedJobs, setSubmittedJobs] = useState([]);
   const [mode, setMode] = useState("time");
   const [termInput, setTermInput] = useState(0);
-  // const [list, setList] = useState([]);
+  const [selectedCondition, setSelectedCondition] = useState("");
   const term = useRef(1000);
 
   const infiniteCheck = async (term) => {
@@ -29,9 +29,20 @@ function App() {
 
   return (
     <div className="App">
-      <List jobs={submittedJobs} setJobs={setSubmittedJobs} />
+      <List
+        jobs={submittedJobs}
+        setJobs={setSubmittedJobs}
+        mode={mode}
+        setSelectedCondition={setSelectedCondition}
+      />
       <TermForm term={term} termInput={termInput} setTermInput={setTermInput} />
-      <JobForm mode={mode} setMode={setMode} />
+      <JobForm
+        mode={mode}
+        setMode={setMode}
+        selectedCondition={selectedCondition}
+        jobs={submittedJobs}
+        setJobs={setSubmittedJobs}
+      />
     </div>
   );
 }
