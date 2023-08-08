@@ -125,6 +125,7 @@ const JobForm = ({
               onChange={handleConditionInput}
               required
               value={selectedCondition}
+              disabled
             />
           </>
         )}
