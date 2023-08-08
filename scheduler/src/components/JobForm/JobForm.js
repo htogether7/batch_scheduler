@@ -62,17 +62,24 @@ const JobForm = ({ mode, setMode }) => {
         axios
           .post("http://localhost:5050/job", {
             name: nameInput,
-            condition: conditionInput,
             month: monthInput,
             day: dayInput,
             hour: hourInput,
             minute: minuteInput,
+            accessable: mode === "time" ? 1 : 0,
           })
           .then((res) => console.log(res.data));
       } else {
-        alert("조건을 다시한번 확인해주세요");
+        alert("시간을 다시한번 확인해주세요");
       }
     } else {
+      axios
+        .post("http://localhost:5050/job", {
+          name: nameInput,
+          condition: conditionInput,
+          accessable: mode === "time" ? 1 : 0,
+        })
+        .then((res) => console.log(res.data));
     }
   };
 

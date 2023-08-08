@@ -39,8 +39,17 @@ app.get("/job", (req, res) => {
 });
 
 app.post("/job", (req, res) => {
-  const now = new Date().toISOString().slice(0, 19).replace("T", " ");
-  const sql = `insert into job_info values ("${now}","${req.body.name}","${req.body.condition}","${req.body.month}","${req.body.day}","${req.body.hour}","${req.body.minute}");`;
+  // const now = new Date().toISOString().slice(0, 19).replace("T", " ");
+  const now = Date.now().toString();
+  let sql = "";
+  if (req.body.accessable) {
+    sql = `insert into job_info values ("${now}","${req.body.name}",
+      null
+    ,"${req.body.month}","${req.body.day}","${req.body.hour}","${req.body.minute}", "${req.body.accessable}");`;
+  } else {
+    sql = `insert into job_info values ("${now}", "${req.body.name}", "${req.body.condition}", null, null, null, null, "${req.body.accessable}")`;
+  }
+
   connection.query(sql, (err, result) => {
     if (err) throw err;
     else {
