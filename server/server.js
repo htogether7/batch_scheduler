@@ -41,12 +41,19 @@ app.get("/job", (req, res) => {
 
 app.post("/job", (req, res) => {
   let sql = "";
+  const is_repeat =
+    req.body.month === "*" ||
+    req.body.day === "*" ||
+    req.body.hour === "*" ||
+    req.body.minute === "*"
+      ? 1
+      : 0;
   if (req.body.month) {
     sql = `insert into job_info values ("${req.body.enrolled_time}","${req.body.name}",
       null
-    ,"${req.body.month}","${req.body.day}","${req.body.hour}","${req.body.minute}", "${req.body.route}");`;
+    ,"${req.body.month}","${req.body.day}","${req.body.hour}","${req.body.minute}", "${req.body.route}", 0, ${is_repeat});`;
   } else {
-    sql = `insert into job_info values ("${req.body.enrolled_time}", "${req.body.name}", "${req.body.pre_condition}", null, null, null, null, "${req.body.route}");`;
+    sql = `insert into job_info values ("${req.body.enrolled_time}", "${req.body.name}", "${req.body.pre_condition}", null, null, null, null, "${req.body.route}", 0, ${is_repeat});`;
   }
 
   connection.query(sql, (err, result) => {
@@ -62,13 +69,14 @@ app.post("/job", (req, res) => {
 });
 
 app.post("/batch", (req, res) => {
-  // console.log(req.body.time);
   const sql = `select * from job_info;`;
+  let jobList = [];
   connection.query(sql, (err, result) => {
     if (err) throw err;
     else {
       // res.json(result);
-      console.log(result);
+      jobList = result;
+      console.log(jobList);
     }
   });
 
