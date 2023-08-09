@@ -17,13 +17,14 @@ const JobForm = ({
   const [hourInput, setHourInput] = useState("");
   const [minuteInput, setMinuteInput] = useState("");
   const [nameInput, setNameInput] = useState("");
-  // const [conditionInput, setConditionInput] = useState("");
+  const [route, setRoute] = useState("");
 
   const handleTimeButton = () => {
     setMode("time");
   };
 
   const handleConditionButton = () => {
+    alert("실행 작업 대기 중인 작업 중 하나를 고르세요.");
     setMode("condition");
   };
 
@@ -73,6 +74,7 @@ const JobForm = ({
             hour: hourInput,
             minute: minuteInput,
             enrolled_time: now,
+            route: route.split("\\")[2],
           })
           .then((res) => setJobs([...jobs, res.data]));
       } else {
@@ -84,11 +86,17 @@ const JobForm = ({
           name: nameInput,
           pre_condition: selectedCondition,
           enrolled_time: now,
+          route: route.split("\\")[2],
         })
         .then((res) => {
           setJobs([...jobs, res.data]);
         });
     }
+  };
+
+  const handleFileChange = (e) => {
+    setRoute(e.target.value);
+    console.log(e.target.value);
   };
 
   return (
@@ -129,6 +137,14 @@ const JobForm = ({
             />
           </>
         )}
+        <br />
+        <label for="fileInput">스크립트 첨부</label>
+        <input
+          id="fileInput"
+          type="file"
+          onChange={handleFileChange}
+          required
+        />
         <button type="submit">제출</button>
       </form>
       <button className="resetButton">전체 작업 초기화</button>
