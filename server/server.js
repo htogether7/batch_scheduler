@@ -3,6 +3,7 @@ const app = express();
 const cors = require("cors");
 const mysql = require("mysql");
 const bodyParser = require("body-parser");
+const { exec } = require("child_process");
 
 const port = 5050;
 
@@ -43,9 +44,9 @@ app.post("/job", (req, res) => {
   if (req.body.month) {
     sql = `insert into job_info values ("${req.body.enrolled_time}","${req.body.name}",
       null
-    ,"${req.body.month}","${req.body.day}","${req.body.hour}","${req.body.minute}");`;
+    ,"${req.body.month}","${req.body.day}","${req.body.hour}","${req.body.minute}", "${req.body.route}");`;
   } else {
-    sql = `insert into job_info values ("${req.body.enrolled_time}", "${req.body.name}", "${req.body.pre_condition}", null, null, null, null);`;
+    sql = `insert into job_info values ("${req.body.enrolled_time}", "${req.body.name}", "${req.body.pre_condition}", null, null, null, null, "${req.body.route}");`;
   }
 
   connection.query(sql, (err, result) => {
@@ -58,6 +59,27 @@ app.post("/job", (req, res) => {
       res.json({ ...req.body });
     }
   });
+});
+
+app.post("/batch", (req, res) => {
+  // console.log(req.body.time);
+  const sql = `select * from job_info;`;
+  connection.query(sql, (err, result) => {
+    if (err) throw err;
+    else {
+      // res.json(result);
+      console.log(result);
+    }
+  });
+
+  const proc = exec("cd ../scripts && sh a.sh ");
+  proc.stdout.on("data", function (data) {
+    console.log(data.toString().trim());
+  });
+  proc.stderr.on("data", function (data) {
+    console.error(data.toString().trim());
+  });
+  res.json({ success: 1 });
 });
 
 app.listen(port, () => {
