@@ -10,15 +10,18 @@ function App() {
   const [mode, setMode] = useState("time");
   const [termInput, setTermInput] = useState(0);
   const [selectedCondition, setSelectedCondition] = useState("");
-  const term = useRef(1000);
+  const term = useRef(10000);
 
   const infiniteCheck = async (term) => {
     const roofTerm = term;
     while (true) {
       if (roofTerm !== term) break;
-      await new Promise((r) => setTimeout(r, term.current)).then(() =>
-        console.log(`now term : ${term.current}, time : ${Date.now()}`)
-      );
+      await new Promise((r) => setTimeout(r, term.current)).then(() => {
+        console.log(`now term : ${term.current}, time : ${Date.now()}`);
+        axios
+          .post("http://localhost:5050/batch", { time: Date.now() })
+          .then((res) => console.log(res.data));
+      });
     }
   };
 
