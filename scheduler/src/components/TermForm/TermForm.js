@@ -2,7 +2,11 @@ import React, { useState } from "react";
 
 const TermForm = ({ term, termInput, setTermInput }) => {
   const validateTerm = (termInput) => {
-    return isNaN(termInput) ? false : parseInt(termInput) < 1000 ? false : true;
+    return isNaN(termInput)
+      ? false
+      : parseInt(termInput) < 10000
+      ? false
+      : true;
   };
 
   const handleTermSubmit = (e) => {
@@ -27,7 +31,7 @@ const TermForm = ({ term, termInput, setTermInput }) => {
     <>
       <form onSubmit={handleTermSubmit}>
         <div>Term 설정</div>
-        <input type="text" onChange={handleChange} placeholder="1000ms 이상" />
+        <input type="text" onChange={handleChange} placeholder="10000ms 이상" />
         <button type="submit">제출</button>
       </form>
     </>
