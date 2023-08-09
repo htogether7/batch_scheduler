@@ -74,19 +74,20 @@ app.post("/batch", (req, res) => {
   connection.query(sql, (err, result) => {
     if (err) throw err;
     else {
-      // res.json(result);
       jobList = result;
       console.log(jobList);
+      for (let job of jobList) {
+        const proc = exec(`cd ../scripts && sh ${job.route}`);
+        proc.stdout.on("data", function (data) {
+          console.log(data.toString().trim());
+        });
+        proc.stderr.on("data", function (data) {
+          console.error(data.toString().trim());
+        });
+      }
     }
   });
 
-  const proc = exec("cd ../scripts && sh a.sh ");
-  proc.stdout.on("data", function (data) {
-    console.log(data.toString().trim());
-  });
-  proc.stderr.on("data", function (data) {
-    console.error(data.toString().trim());
-  });
   res.json({ success: 1 });
 });
 
