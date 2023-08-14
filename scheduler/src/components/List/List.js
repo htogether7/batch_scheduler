@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./List.css";
 import axios from "axios";
+import Li from "../Li/Li";
 
 const List = ({
   jobs,
@@ -83,18 +84,28 @@ const List = ({
       <div>실행 대기중인 작업</div>
       <ul>
         {jobs.map((job) => (
-          <li key={job.enrolled_time}>
-            <div onClick={handleLiClick} id={job.enrolled_time}>
-              {job.name} {job.pre_condition} {job.month} {job.day} {job.hour}{" "}
-              {job.minute}
-            </div>
-            <button onClick={handleUpdateClick} id={job.enrolled_time}>
-              수정
-            </button>
-            <button onClick={handleDeleteClick} id={job.enrolled_time}>
-              삭제
-            </button>
-          </li>
+          // <li
+          //   onClick={handleLiClick}
+          //   key={job.enrolled_time}
+          //   id={job.enrolled_time}
+          // >
+          //   <div id={job.enrolled_time}>
+          //     {job.name} {job.pre_condition} {job.month} {job.day} {job.hour}{" "}
+          //     {job.minute}
+          //   </div>
+          //   <button onClick={handleUpdateClick} id={job.enrolled_time}>
+          //     수정
+          //   </button>
+          //   <button onClick={handleDeleteClick} id={job.enrolled_time}>
+          //     삭제
+          //   </button>
+          // </li>
+          <Li
+            handleLiClick={handleLiClick}
+            handleUpdateClick={handleUpdateClick}
+            handleDeleteClick={handleDeleteClick}
+            job={job}
+          />
         ))}
       </ul>
     </>
