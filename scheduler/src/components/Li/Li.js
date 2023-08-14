@@ -3,20 +3,34 @@ import React from "react";
 const Li = ({
   handleDeleteClick,
   handleUpdateClick,
-  handleLiClick,
   job,
   jobs,
+  setSelectedCondition,
+  mode,
 }) => {
+  const handleLiClick = (e) => {
+    console.log(e.target);
+    if (mode === "condition") {
+      setSelectedCondition(e.target.id);
+    }
+  };
   return (
     <li onClick={handleLiClick} key={job.enrolled_time} id={job.enrolled_time}>
       <div id={job.enrolled_time}>
         <div>{job.name}</div>
-        {job.month
-          ? `실행 시간 :${job.month}월 ${job.day}일 ${job.hour}시 ${job.minute}분`
-          : `선행 조건 : ${
-              jobs.filter((obj) => obj.enrolled_time === job.pre_condition)[0]
-                .name
-            }`}
+        <div id={job.enrolled_time}>
+          {job.month
+            ? `실행 시간 :${job.month}월 ${job.day}일 ${job.hour}시 ${job.minute}분`
+            : ` ${
+                ("선행 조건 :",
+                jobs.filter((obj) => obj.enrolled_time === job.pre_condition)[0]
+                  ? jobs.filter(
+                      (obj) => obj.enrolled_time === job.pre_condition
+                    )[0].name
+                  : "선행 조건이 제거되어 실행 불가")
+              }`}
+        </div>
+        <div>실행 파일 : ${job.route}</div>
       </div>
       <button onClick={handleUpdateClick} id={job.enrolled_time}>
         수정
