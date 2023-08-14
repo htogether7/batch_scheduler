@@ -2,16 +2,61 @@ import React, { useEffect, useState } from "react";
 import "./List.css";
 import axios from "axios";
 
-const List = ({ jobs, setJobs, mode, setSelectedCondition }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
+const List = ({
+  jobs,
+  setJobs,
+  mode,
+  setSelectedCondition,
+  isEditting,
+  setIsEditting,
+  setMonthInput,
+  setDayInput,
+  setHourInput,
+  setMinuteInput,
+  setNameInput,
+  setMode,
+  fileInput,
+  setFileMode,
+  setRoute,
+  setSelectedId,
+  monthInput,
+}) => {
   const handleLiClick = (e) => {
     if (mode === "condition") {
       setSelectedCondition(e.target.id);
     }
   };
 
-  const handleUpdateClick = () => {};
+  const handleUpdateClick = (e) => {
+    setMonthInput("");
+    setDayInput("");
+    setHourInput("");
+    setMinuteInput("");
+    setNameInput("");
+    setRoute("");
+    setSelectedCondition("");
+    const selectedJob = jobs.filter(
+      (job) => job.enrolled_time === e.target.id
+    )[0];
+    setSelectedId(selectedJob.enrolled_time);
+    setNameInput(selectedJob.name);
+    if (selectedJob.pre_condition) {
+      setSelectedCondition(selectedJob.pre_condition);
+    } else {
+      setMonthInput(selectedJob.month);
+      setDayInput(selectedJob.day);
+      setHourInput(selectedJob.hour);
+      setMinuteInput(selectedJob.minute);
+    }
+    if (selectedJob.month) {
+      setMode("time");
+    } else {
+      setMode("condition");
+    }
+    setFileMode(false);
+    setRoute(selectedJob.route);
+    setIsEditting(true);
+  };
 
   const handleDeleteClick = (e) => {
     const requestJobDelete = async () => {
@@ -43,7 +88,9 @@ const List = ({ jobs, setJobs, mode, setSelectedCondition }) => {
               {job.name} {job.pre_condition} {job.month} {job.day} {job.hour}{" "}
               {job.minute}
             </div>
-            <button onClick={handleUpdateClick}>수정</button>
+            <button onClick={handleUpdateClick} id={job.enrolled_time}>
+              수정
+            </button>
             <button onClick={handleDeleteClick} id={job.enrolled_time}>
               삭제
             </button>

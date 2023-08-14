@@ -92,6 +92,33 @@ app.delete("/job", (req, res) => {
   });
 });
 
+app.put("/job", (req, res) => {
+  const { id } = req.query;
+  const { month, day, hour, minute, pre_condition, route, name } = req.body;
+  // console.log(id, name, month, day, hour, minute, route, pre_condition);
+  let sql = "";
+  if (month) {
+    sql = `update job_info set name="${name}",month="${month}",day="${day}",hour="${hour}",minute="${minute}",route="${route}" where enrolled_time = "${id}"`;
+  } else {
+    sql = `update job_info set name="${name}",route="${route}",pre_condition="${pre_condition}" where enrolled_time="${id}"`;
+  }
+  connection.query(sql, (err, result) => {
+    if (err) throw err;
+    else {
+      // // console.log(result);
+      // res.json(result);
+      const sql2 = "select * from job_info";
+      connection.query(sql2, (err, result) => {
+        if (err) throw err;
+        else {
+          console.log(result);
+          res.json(result);
+        }
+      });
+    }
+  });
+});
+
 const execute = async (jobList) => {
   for (let job of jobList) {
     const proc = await new Promise(() =>

@@ -11,6 +11,15 @@ function App() {
   const [termInput, setTermInput] = useState(0);
   const [selectedCondition, setSelectedCondition] = useState("");
   const term = useRef(10000);
+  const [isEditting, setIsEditting] = useState(false);
+  const [monthInput, setMonthInput] = useState("");
+  const [dayInput, setDayInput] = useState("");
+  const [hourInput, setHourInput] = useState("");
+  const [minuteInput, setMinuteInput] = useState("");
+  const [nameInput, setNameInput] = useState("");
+  const [fileMode, setFileMode] = useState(false);
+  const [route, setRoute] = useState("");
+  const [selectedId, setSelectedId] = useState("");
 
   const infiniteCheck = async (term) => {
     const roofTerm = term;
@@ -37,6 +46,19 @@ function App() {
         setJobs={setSubmittedJobs}
         mode={mode}
         setSelectedCondition={setSelectedCondition}
+        isEditting={isEditting}
+        setIsEditting={setIsEditting}
+        setMonthInput={setMonthInput}
+        setDayInput={setDayInput}
+        setHourInput={setHourInput}
+        setMinuteInput={setMinuteInput}
+        setNameInput={setNameInput}
+        setMode={setMode}
+        setFileMode={setFileMode}
+        setRoute={setRoute}
+        selectedId={selectedId}
+        setSelectedId={setSelectedId}
+        monthInput={monthInput}
       />
       <TermForm term={term} termInput={termInput} setTermInput={setTermInput} />
       <JobForm
@@ -46,6 +68,24 @@ function App() {
         setSelectedCondition={setSelectedCondition}
         jobs={submittedJobs}
         setJobs={setSubmittedJobs}
+        isEditting={isEditting}
+        setIsEditting={setIsEditting}
+        monthInput={monthInput}
+        setMonthInput={setMonthInput}
+        dayInput={dayInput}
+        setDayInput={setDayInput}
+        hourInput={hourInput}
+        setHourInput={setHourInput}
+        minuteInput={minuteInput}
+        setMinuteInput={setMinuteInput}
+        nameInput={nameInput}
+        setNameInput={setNameInput}
+        fileMode={fileMode}
+        setFileMode={setFileMode}
+        route={route}
+        setRoute={setRoute}
+        selectedId={selectedId}
+        setSelectedId={setSelectedId}
       />
     </div>
   );

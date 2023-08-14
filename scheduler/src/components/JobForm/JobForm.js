@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import "./JobForm.css";
 import TimeInput from "../TimeInput/TimeInput";
@@ -11,21 +11,37 @@ const JobForm = ({
   setSelectedCondition,
   jobs,
   setJobs,
+  isEditting,
+  setIsEditting,
+  monthInput,
+  setMonthInput,
+  dayInput,
+  setDayInput,
+  hourInput,
+  setHourInput,
+  minuteInput,
+  setMinuteInput,
+  nameInput,
+  setNameInput,
+  fileMode,
+  setFileMode,
+  route,
+  setRoute,
+  selectedId,
+  setSelectedId,
 }) => {
-  const [monthInput, setMonthInput] = useState("");
-  const [dayInput, setDayInput] = useState("");
-  const [hourInput, setHourInput] = useState("");
-  const [minuteInput, setMinuteInput] = useState("");
-  const [nameInput, setNameInput] = useState("");
-  const [route, setRoute] = useState("");
-
   const handleTimeButton = () => {
     setMode("time");
+    setSelectedCondition("");
   };
 
   const handleConditionButton = () => {
     alert("실행 작업 대기 중인 작업 중 하나를 고르세요.");
     setMode("condition");
+    setMonthInput("");
+    setDayInput("");
+    setHourInput("");
+    setMinuteInput("");
   };
 
   const handleNameInput = (e) => {
@@ -86,7 +102,7 @@ const JobForm = ({
           name: nameInput,
           pre_condition: selectedCondition,
           enrolled_time: now,
-          route: route.split("\\")[2],
+          route: route,
         })
         .then((res) => {
           setJobs([...jobs, res.data]);
@@ -94,16 +110,57 @@ const JobForm = ({
     }
   };
 
+  const handleJobUpdate = (e) => {
+    e.preventDefault();
+    axios
+      .put(`http://localhost:5050/job?id=${selectedId}`, {
+        month: monthInput,
+        day: dayInput,
+        hour: hourInput,
+        minute: minuteInput,
+        route: route,
+        pre_condition: selectedCondition,
+        name: nameInput,
+      })
+      .then((res) => {
+        setJobs(res.data);
+        setIsEditting(false);
+        setNameInput("");
+        setMonthInput("");
+        setDayInput("");
+        setHourInput("");
+        setMinuteInput("");
+        setRoute("");
+        setSelectedCondition("");
+      });
+  };
+
   const handleFileChange = (e) => {
     setRoute(e.target.value);
-    console.log(e.target.value);
+  };
+
+  const handleCancelClick = () => {
+    setMonthInput("");
+    setDayInput("");
+    setHourInput("");
+    setMinuteInput("");
+    setNameInput("");
+    setRoute("");
+    setSelectedCondition("");
+    setSelectedId("");
+    setIsEditting(false);
   };
 
   return (
     <>
-      <form onSubmit={handleJobSubmit}>
-        <div>작업 등록</div>
-        <input type="text" required onChange={handleNameInput} />
+      <form onSubmit={isEditting ? handleJobUpdate : handleJobSubmit}>
+        <div className="title">{isEditting ? "작업 수정" : "작업 등록"}</div>
+        <input
+          type="text"
+          required
+          onChange={handleNameInput}
+          value={nameInput}
+        />
         <br></br>
         <button type="button" onClick={handleTimeButton}>
           주기
@@ -114,13 +171,32 @@ const JobForm = ({
         <br></br>
         {mode === "time" ? (
           <>
-            <TimeInput id="month" content="월" func={setMonthInput} required />
-            <TimeInput id="day" content="일" func={setDayInput} required />
-            <TimeInput id="hour" content="시" func={setHourInput} required />
+            <TimeInput
+              id="month"
+              content="월"
+              func={setMonthInput}
+              value={monthInput}
+              required
+            />
+            <TimeInput
+              id="day"
+              content="일"
+              func={setDayInput}
+              value={dayInput}
+              required
+            />
+            <TimeInput
+              id="hour"
+              content="시"
+              func={setHourInput}
+              value={hourInput}
+              required
+            />
             <TimeInput
               id="minute"
               content="분"
               func={setMinuteInput}
+              value={minuteInput}
               required
             />
           </>
@@ -138,14 +214,34 @@ const JobForm = ({
           </>
         )}
         <br />
-        <label for="fileInput">스크립트 첨부</label>
-        <input
-          id="fileInput"
-          type="file"
-          onChange={handleFileChange}
-          required
-        />
+        {!isEditting ? (
+          <input
+            id="fileInput"
+            type="file"
+            onChange={handleFileChange}
+            required
+          />
+        ) : !fileMode ? (
+          <button
+            type="button"
+            onClick={() => {
+              setFileMode(true);
+            }}
+          >
+            Update File
+          </button>
+        ) : (
+          <input
+            id="fileInput"
+            type="file"
+            onChange={handleFileChange}
+            required
+          />
+        )}
         <button type="submit">제출</button>
+        <button type="button" onClick={handleCancelClick}>
+          취소
+        </button>
       </form>
       <button className="resetButton">전체 작업 초기화</button>
     </>
