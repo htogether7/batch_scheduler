@@ -84,27 +84,12 @@ const List = ({
       <div>실행 대기중인 작업</div>
       <ul>
         {jobs.map((job) => (
-          // <li
-          //   onClick={handleLiClick}
-          //   key={job.enrolled_time}
-          //   id={job.enrolled_time}
-          // >
-          //   <div id={job.enrolled_time}>
-          //     {job.name} {job.pre_condition} {job.month} {job.day} {job.hour}{" "}
-          //     {job.minute}
-          //   </div>
-          //   <button onClick={handleUpdateClick} id={job.enrolled_time}>
-          //     수정
-          //   </button>
-          //   <button onClick={handleDeleteClick} id={job.enrolled_time}>
-          //     삭제
-          //   </button>
-          // </li>
           <Li
             handleLiClick={handleLiClick}
             handleUpdateClick={handleUpdateClick}
             handleDeleteClick={handleDeleteClick}
             job={job}
+            jobs={jobs}
           />
         ))}
       </ul>
