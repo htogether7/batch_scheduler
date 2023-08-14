@@ -59,7 +59,12 @@ app.post("/job", (req, res) => {
   connection.query(sql, (err, result) => {
     if (err) throw err;
     else {
-      const sql2 = `insert into flow values ("${req.body.enrolled_time}", "${req.body.pre_condition}")`;
+      let sql2 = `insert into flow values ("${req.body.enrolled_time}", `;
+      if (req.body.pre_condition) {
+        sql2 += `"${req.body.pre_condition}");`;
+      } else {
+        sql2 += "null);";
+      }
       connection.query(sql2, (err, result) => {
         if (err) throw err;
       });
@@ -68,6 +73,39 @@ app.post("/job", (req, res) => {
   });
 });
 
+app.delete("/job", (req, res) => {
+  const sql = `delete from job_info where enrolled_time ="${req.query.id}";`;
+
+  connection.query(sql, (err, result) => {
+    if (err) throw err;
+    else {
+      const sql2 = `delete from flow where process = "${req.query.id}" || pre_condition = "${req.query.id}";`;
+      connection.query(sql2, (err, result) => {
+        if (err) throw err;
+      });
+      const sql3 = "select * from job_info;";
+      connection.query(sql3, (err, result) => {
+        console.log(result);
+        res.json(result);
+      });
+    }
+  });
+});
+
+const execute = async (jobList) => {
+  for (let job of jobList) {
+    const proc = await new Promise(() =>
+      exec(`cd ../scripts && sh ${job.route}`)
+    );
+    proc.stdout.on("data", function (data) {
+      console.log(data.toString().trim(), Date.now());
+    });
+    proc.stderr.on("data", function (data) {
+      console.error(data.toString().trim());
+    });
+  }
+};
+
 app.post("/batch", (req, res) => {
   const sql = `select * from job_info;`;
   let jobList = [];
@@ -75,16 +113,8 @@ app.post("/batch", (req, res) => {
     if (err) throw err;
     else {
       jobList = result;
+      execute(jobList);
       console.log(jobList);
-      for (let job of jobList) {
-        const proc = exec(`cd ../scripts && sh ${job.route}`);
-        proc.stdout.on("data", function (data) {
-          console.log(data.toString().trim());
-        });
-        proc.stderr.on("data", function (data) {
-          console.error(data.toString().trim());
-        });
-      }
     }
   });
 
