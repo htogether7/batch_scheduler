@@ -30,6 +30,13 @@ const JobForm = ({
   selectedId,
   setSelectedId,
 }) => {
+  const resetTimeInput = () => {
+    setMonthInput("");
+    setDayInput("");
+    setHourInput("");
+    setMinuteInput("");
+  };
+
   const handleTimeButton = () => {
     setMode("time");
     setSelectedCondition("");
@@ -38,10 +45,7 @@ const JobForm = ({
   const handleConditionButton = () => {
     alert("실행 작업 대기 중인 작업 중 하나를 고르세요.");
     setMode("condition");
-    setMonthInput("");
-    setDayInput("");
-    setHourInput("");
-    setMinuteInput("");
+    resetTimeInput();
   };
 
   const handleNameInput = (e) => {
@@ -102,7 +106,7 @@ const JobForm = ({
           name: nameInput,
           pre_condition: selectedCondition,
           enrolled_time: now,
-          route: route,
+          route: route.split("\\")[2],
         })
         .then((res) => {
           setJobs([...jobs, res.data]);
@@ -126,10 +130,7 @@ const JobForm = ({
         setJobs(res.data);
         setIsEditting(false);
         setNameInput("");
-        setMonthInput("");
-        setDayInput("");
-        setHourInput("");
-        setMinuteInput("");
+        resetTimeInput();
         setRoute("");
         setSelectedCondition("");
       });
@@ -140,10 +141,7 @@ const JobForm = ({
   };
 
   const handleCancelClick = () => {
-    setMonthInput("");
-    setDayInput("");
-    setHourInput("");
-    setMinuteInput("");
+    resetTimeInput();
     setNameInput("");
     setRoute("");
     setSelectedCondition("");
