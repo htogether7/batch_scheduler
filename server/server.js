@@ -96,7 +96,6 @@ app.delete("/job", (req, res) => {
 app.put("/job", (req, res) => {
   const { id } = req.query;
   const { month, day, hour, minute, pre_condition, route, name } = req.body;
-  // console.log(id, name, month, day, hour, minute, route, pre_condition);
   let sql = "";
   if (month) {
     sql = `update job_info set name="${name}",month="${month}",day="${day}",hour="${hour}",minute="${minute}",route="${route}" where enrolled_time = "${id}"`;
@@ -106,8 +105,6 @@ app.put("/job", (req, res) => {
   connection.query(sql, (err, result) => {
     if (err) throw err;
     else {
-      // // console.log(result);
-      // res.json(result);
       const sql2 = "select * from job_info";
       connection.query(sql2, (err, result) => {
         if (err) throw err;
@@ -123,31 +120,22 @@ app.put("/job", (req, res) => {
 const execute = async (job) => {
   const start = Date.now();
   const { stdout, stderr } = await exec(`cd ../scripts && sh ${job.route}`);
-  // proc.stdout.on("data", function (data) {
-  // console.log(data.toString().trim(), Date.now());
-  // });
-  // proc.stderr.on("data", function (data) {
-  // console.error(data.toString().trim());
-  // });
-  if (!job.is_repeat && completed) return 0;
+
+  if (!job.is_repeat && job.completed) return "";
+
   stdout.on("data", (data) => {
-    console.log(data.toString().trim(), Date.now());
     const end = Date.now();
     const execution_time = new Date(end - start).getTime().toString();
-    // console.log(execution_time);
-    // console.log(job);
     const sql = `update job_info set completed="${end.toString()}" where enrolled_time = "${
       job.enrolled_time
     }"`;
     connection.query(sql, (err, result) => {
       if (err) throw err;
-      // else {
-      // }
+      else {
+        return execution_time;
+      }
     });
   });
-
-  // console.log("out", stdout);
-  // console.log("err", stderr);
 };
 
 const checkExec = (now, enrolled) => {
@@ -200,7 +188,6 @@ app.post("/batch", (req, res) => {
       }
     }
   });
-  // console.log("exec!", .getMonth());
   res.json({ success: 1 });
 });
 
