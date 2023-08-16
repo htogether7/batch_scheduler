@@ -129,6 +129,7 @@ const execute = async (job) => {
   // proc.stderr.on("data", function (data) {
   // console.error(data.toString().trim());
   // });
+  if (!job.is_repeat && completed) return 0;
   stdout.on("data", (data) => {
     console.log(data.toString().trim(), Date.now());
     const end = Date.now();
