@@ -121,6 +121,7 @@ app.put("/job", (req, res) => {
 });
 
 const execute = async (job) => {
+  const start = Date.now();
   const { stdout, stderr } = await exec(`cd ../scripts && sh ${job.route}`);
   // proc.stdout.on("data", function (data) {
   // console.log(data.toString().trim(), Date.now());
@@ -130,8 +131,20 @@ const execute = async (job) => {
   // });
   stdout.on("data", (data) => {
     console.log(data.toString().trim(), Date.now());
-    // const sql = `update job_info set is_completed="${}"`
+    const end = Date.now();
+    const execution_time = new Date(end - start).getTime().toString();
+    // console.log(execution_time);
+    // console.log(job);
+    const sql = `update job_info set completed="${end.toString()}" where enrolled_time = "${
+      job.enrolled_time
+    }"`;
+    connection.query(sql, (err, result) => {
+      if (err) throw err;
+      // else {
+      // }
+    });
   });
+
   // console.log("out", stdout);
   // console.log("err", stderr);
 };
