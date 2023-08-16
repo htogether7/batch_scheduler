@@ -83,6 +83,7 @@ app.delete("/job", (req, res) => {
       connection.query(sql2, (err, result) => {
         if (err) throw err;
       });
+
       const sql3 = "select * from job_info;";
       connection.query(sql3, (err, result) => {
         console.log(result);
@@ -119,18 +120,43 @@ app.put("/job", (req, res) => {
   });
 });
 
-const execute = async (jobList) => {
-  for (let job of jobList) {
-    const proc = await new Promise(() =>
-      exec(`cd ../scripts && sh ${job.route}`)
-    );
-    proc.stdout.on("data", function (data) {
-      console.log(data.toString().trim(), Date.now());
-    });
-    proc.stderr.on("data", function (data) {
-      console.error(data.toString().trim());
-    });
+const execute = async (job) => {
+  const { stdout, stderr } = await exec(`cd ../scripts && sh ${job.route}`);
+  // proc.stdout.on("data", function (data) {
+  // console.log(data.toString().trim(), Date.now());
+  // });
+  // proc.stderr.on("data", function (data) {
+  // console.error(data.toString().trim());
+  // });
+  stdout.on("data", (data) => {
+    console.log(data.toString().trim(), Date.now());
+    // const sql = `update job_info set is_completed="${}"`
+  });
+  // console.log("out", stdout);
+  // console.log("err", stderr);
+};
+
+const checkExec = (now, enrolled) => {
+  for (let index = 0; index < 4; index++) {
+    if (now[index] < enrolled[index]) {
+      return false;
+    } else if (now[index] > enrolled[index]) {
+      return true;
+    } else {
+      if (index === 3) return true;
+    }
   }
+
+  return true;
+};
+
+const getTimeList = (date) => {
+  return [
+    date.getMonth() + 1,
+    date.getDate(),
+    date.getHours(),
+    date.getMinutes(),
+  ];
 };
 
 app.post("/batch", (req, res) => {
@@ -139,12 +165,28 @@ app.post("/batch", (req, res) => {
   connection.query(sql, (err, result) => {
     if (err) throw err;
     else {
+      const now_to_date_format = new Date(parseInt(req.body.time));
+
       jobList = result;
-      execute(jobList);
-      console.log(jobList);
+      for (let job of jobList) {
+        if (job.month) {
+          if (
+            checkExec(getTimeList(now_to_date_format), [
+              parseInt(job.month),
+              parseInt(job.day),
+              parseInt(job.hour),
+              parseInt(job.minute),
+            ])
+          ) {
+            execute(job);
+          } else console.log("not yet!");
+        } else {
+          console.log("condition!!");
+        }
+      }
     }
   });
-
+  // console.log("exec!", .getMonth());
   res.json({ success: 1 });
 });
 
