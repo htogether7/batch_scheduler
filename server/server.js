@@ -125,10 +125,25 @@ app.put("/job", (req, res) => {
 });
 
 const execute = (job) => {
-  console.log(
-    execSync(`cd ../scripts && sh ${job.route}`).toString(),
-    Date.now()
-  );
+  const start = Date.now();
+  console.log(execSync(`cd ../scripts && sh ${job.route}`).toString());
+  // const end = Date.now();
+
+  const completed = Date.now();
+  // console.log(completed);
+  // console.log(job);
+  let sql2 = `update job_info set completed="${completed.toString()}" where enrolled_time="${
+    job.enrolled_time
+  }"`;
+  connection.query(sql2);
+
+  const time = new Date(completed - start).getTime() / 1000;
+
+  let sql3 = `INSERT INTO expected_execution_time VALUES ("${job.route}", ${time},1)
+  ON DUPLICATE KEY
+  UPDATE execution_count = execution_count + 1, expected_time = ((expected_time * execution_count)+${time}) / (execution_count + 1);`;
+
+  connection.query(sql3);
 };
 
 const checkExec = (now, enrolled) => {
@@ -141,8 +156,17 @@ const checkExec = (now, enrolled) => {
       if (index === 3) return true;
     }
   }
-
   return true;
+};
+
+const mustBeExecuted = (job) => {
+  if (!job.is_repeat) {
+    if (job.completed === "0") {
+      return true;
+    } else return false;
+  } else if (job.is_repeat) {
+    console.log(job.completed);
+  }
 };
 
 const getTimeList = (date) => {
@@ -173,10 +197,10 @@ app.post("/batch", (req, res) => {
               parseInt(job.day),
               parseInt(job.hour),
               parseInt(job.minute),
-            ])
+            ]) &&
+            mustBeExecuted(job)
           ) {
             heap.heappush(job);
-            // execute(job);
           } else console.log("not yet!");
         } else {
           console.log("condition!!");
@@ -187,8 +211,6 @@ app.post("/batch", (req, res) => {
         console.log("start : ", Date.now());
         const currJob = heap.heappop();
         execute(currJob);
-        // console.log(heap);
-        // console.log(currJob);
       }
     }
   });
