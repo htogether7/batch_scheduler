@@ -3,7 +3,8 @@ const app = express();
 const cors = require("cors");
 const mysql = require("mysql");
 const bodyParser = require("body-parser");
-const { exec } = require("child_process");
+const { execSync } = require("child_process");
+const { Heap } = require("./heap.js");
 
 const port = 5050;
 
@@ -68,6 +69,12 @@ app.post("/job", (req, res) => {
       connection.query(sql2, (err, result) => {
         if (err) throw err;
       });
+
+      let sql3 = ` insert ignore into expected_execution_time values ("${req.body.name}", 0,0);`;
+      connection.query(sql3, (err, result) => {
+        if (err) throw err;
+      });
+
       res.json({ ...req.body });
     }
   });
@@ -117,25 +124,11 @@ app.put("/job", (req, res) => {
   });
 });
 
-const execute = async (job) => {
-  const start = Date.now();
-  const { stdout, stderr } = await exec(`cd ../scripts && sh ${job.route}`);
-
-  if (!job.is_repeat && job.completed) return "";
-
-  stdout.on("data", (data) => {
-    const end = Date.now();
-    const execution_time = new Date(end - start).getTime().toString();
-    const sql = `update job_info set completed="${end.toString()}" where enrolled_time = "${
-      job.enrolled_time
-    }"`;
-    connection.query(sql, (err, result) => {
-      if (err) throw err;
-      else {
-        return execution_time;
-      }
-    });
-  });
+const execute = (job) => {
+  console.log(
+    execSync(`cd ../scripts && sh ${job.route}`).toString(),
+    Date.now()
+  );
 };
 
 const checkExec = (now, enrolled) => {
@@ -162,15 +155,17 @@ const getTimeList = (date) => {
 };
 
 app.post("/batch", (req, res) => {
-  const sql = `select * from job_info;`;
+  const sql = `select * from job_info join expected_execution_time on job_info.name = expected_execution_time.name;`;
   let jobList = [];
+  console.log("batch!!!", Date.now());
   connection.query(sql, (err, result) => {
     if (err) throw err;
     else {
       const now_to_date_format = new Date(parseInt(req.body.time));
-
+      const heap = new Heap();
       jobList = result;
       for (let job of jobList) {
+        // console.log(job);
         if (job.month) {
           if (
             checkExec(getTimeList(now_to_date_format), [
@@ -180,11 +175,20 @@ app.post("/batch", (req, res) => {
               parseInt(job.minute),
             ])
           ) {
-            execute(job);
+            heap.heappush(job);
+            // execute(job);
           } else console.log("not yet!");
         } else {
           console.log("condition!!");
         }
+      }
+
+      while (heap.getLength() > 0) {
+        console.log("start : ", Date.now());
+        const currJob = heap.heappop();
+        execute(currJob);
+        // console.log(heap);
+        // console.log(currJob);
       }
     }
   });
