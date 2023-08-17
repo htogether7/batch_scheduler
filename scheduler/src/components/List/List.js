@@ -22,12 +22,6 @@ const List = ({
   setSelectedId,
   monthInput,
 }) => {
-  const handleLiClick = (e) => {
-    if (mode === "condition") {
-      setSelectedCondition(e.target.id);
-    }
-  };
-
   const handleUpdateClick = (e) => {
     setMonthInput("");
     setDayInput("");
@@ -85,11 +79,12 @@ const List = ({
       <ul>
         {jobs.map((job) => (
           <Li
-            handleLiClick={handleLiClick}
+            setSelectedCondition={setSelectedCondition}
             handleUpdateClick={handleUpdateClick}
             handleDeleteClick={handleDeleteClick}
             job={job}
             jobs={jobs}
+            mode={mode}
           />
         ))}
       </ul>
