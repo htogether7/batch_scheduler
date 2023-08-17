@@ -146,7 +146,7 @@ const execute = (job) => {
   connection.query(sql3);
 };
 
-const checkExec = (now, enrolled) => {
+const isTimePassed = (now, enrolled) => {
   for (let index = 0; index < 4; index++) {
     if (now[index] < enrolled[index]) {
       return false;
@@ -160,12 +160,22 @@ const checkExec = (now, enrolled) => {
 };
 
 const mustBeExecuted = (job) => {
+  if (job.completed === "0") return true;
   if (!job.is_repeat) {
-    if (job.completed === "0") {
+    if (!job.completed === "0") {
+      return false;
+    }
+  } else if (job.is_repeat) {
+    const now = Date.now();
+    const completed = parseInt(job.completed);
+
+    let minimum_term = 0;
+    if ((job.hour = "*")) minimum_term = 1000 * 60 * 60;
+    if ((job.minute = "*")) minimum_term = 1000 * 60;
+
+    if (now - completed >= minimum_term) {
       return true;
     } else return false;
-  } else if (job.is_repeat) {
-    console.log(job.completed);
   }
 };
 
@@ -192,7 +202,7 @@ app.post("/batch", (req, res) => {
         // console.log(job);
         if (job.month) {
           if (
-            checkExec(getTimeList(now_to_date_format), [
+            isTimePassed(getTimeList(now_to_date_format), [
               parseInt(job.month),
               parseInt(job.day),
               parseInt(job.hour),
