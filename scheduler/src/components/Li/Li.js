@@ -20,7 +20,7 @@ const Li = ({
         <div id={job.enrolled_time}>
           {job.month
             ? `실행 시간 :${job.month}월 ${job.day}일 ${job.hour}시 ${job.minute}분`
-            : ` ${
+            : `선행 조건 : ${
                 jobs.filter((obj) => obj.enrolled_time === job.pre_condition)[0]
                   ? jobs.filter(
                       (obj) => obj.enrolled_time === job.pre_condition
