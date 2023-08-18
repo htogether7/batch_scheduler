@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const mysql = require("mysql");
+const mysql2 = require("mysql2/promise");
 const bodyParser = require("body-parser");
 const { execSync } = require("child_process");
 const { Heap } = require("./heap.js");
@@ -21,14 +22,14 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-connection.connect((err) => {
-  if (err) {
-    console.log("mysql connection error");
-    throw err;
-  } else {
-    console.log("connect!");
-  }
-});
+// connection.connect((err) => {
+//   if (err) {
+//     console.log("mysql connection error");
+//     throw err;
+//   } else {
+//     console.log("connect!");
+//   }
+// });
 
 app.get("/job", (req, res) => {
   const sql = `select * from job_info;`;
@@ -106,11 +107,14 @@ app.put("/job", (req, res) => {
   if (month) {
     sql = `update job_info set name="${name}",month="${month}",day="${day}",hour="${hour}",minute="${minute}",route="${route}" where enrolled_time = "${id}"`;
   } else {
+    console.log("change condition!!");
     sql = `update job_info set name="${name}",route="${route}",pre_condition="${pre_condition}" where enrolled_time="${id}"`;
   }
   connection.query(sql, (err, result) => {
     if (err) throw err;
     else {
+      const updateFlow = `update flow set pre_condition="${pre_condition}" where process = "${id}"`;
+      connection.query(updateFlow);
       const sql2 = "select * from job_info";
       connection.query(sql2, (err, result) => {
         if (err) throw err;
@@ -192,6 +196,37 @@ const getTimeList = (date) => {
   ];
 };
 
+const updateHeap = async (heap, currJob) => {
+  const asyncConnection = await mysql2.createConnection({
+    host: "localhost",
+    port: 3306,
+    user: "root",
+    password: "sh12091209",
+    database: "scheduler",
+    dateStrings: "date",
+  });
+  const sql2 = `select * from job_info
+  join flow 
+  on job_info.enrolled_time = flow.process
+  where flow.pre_condition = "${currJob.enrolled_time}"`;
+  const [result] = await asyncConnection.query(sql2);
+  return result;
+};
+
+const totalExecute = async (heap) => {
+  while (heap.getLength() > 0) {
+    const currJob = heap.heappop();
+    execute(currJob);
+    await updateHeap(heap, currJob).then((res) => {
+      for (let job of res) {
+        heap.heappush(job);
+      }
+    });
+
+    console.log(currJob.name, "end!!", Date.now());
+  }
+};
+
 app.post("/batch", (req, res) => {
   const sql = `select * from job_info join expected_execution_time on job_info.name = expected_execution_time.name;`;
   let jobList = [];
@@ -229,17 +264,11 @@ app.post("/batch", (req, res) => {
               heap.heappush(job);
             }
           }
-        } else {
-          console.log("condition!!");
         }
       }
 
       if (heap.getLength() === 0) console.log("nothing to be executed!");
-      while (heap.getLength() > 0) {
-        const currJob = heap.heappop();
-        execute(currJob);
-        console.log(currJob.name, "end!!", Date.now());
-      }
+      totalExecute(heap);
     }
   });
   res.json({ success: 1 });
