@@ -93,7 +93,6 @@ app.delete("/job", (req, res) => {
 
       const sql3 = "select * from job_info;";
       connection.query(sql3, (err, result) => {
-        console.log(result);
         res.json(result);
       });
     }
@@ -116,7 +115,6 @@ app.put("/job", (req, res) => {
       connection.query(sql2, (err, result) => {
         if (err) throw err;
         else {
-          console.log(result);
           res.json(result);
         }
       });
@@ -127,11 +125,8 @@ app.put("/job", (req, res) => {
 const execute = (job) => {
   const start = Date.now();
   console.log(execSync(`cd ../scripts && sh ${job.route}`).toString());
-  // const end = Date.now();
 
   const completed = Date.now();
-  // console.log(completed);
-  // console.log(job);
   let sql2 = `update job_info set completed="${completed.toString()}" where enrolled_time="${
     job.enrolled_time
   }"`;
@@ -139,7 +134,7 @@ const execute = (job) => {
 
   const time = new Date(completed - start).getTime() / 1000;
 
-  let sql3 = `INSERT INTO expected_execution_time VALUES ("${job.route}", ${time},1)
+  let sql3 = `INSERT INTO expected_execution_time VALUES ("${job.name}", ${time},1)
   ON DUPLICATE KEY
   UPDATE execution_count = execution_count + 1, expected_time = ((expected_time * execution_count)+${time}) / (execution_count + 1);`;
 
@@ -148,6 +143,7 @@ const execute = (job) => {
 
 const isTimePassed = (now, enrolled) => {
   for (let index = 0; index < 4; index++) {
+    if (enrolled[index] === "*") continue;
     if (now[index] < enrolled[index]) {
       return false;
     } else if (now[index] > enrolled[index]) {
@@ -155,6 +151,14 @@ const isTimePassed = (now, enrolled) => {
     } else {
       if (index === 3) return true;
     }
+  }
+  return true;
+};
+
+const isTimeMatched = (now, enrolled) => {
+  for (let index = 0; index < 4; index++) {
+    if (enrolled[index] === "*") continue;
+    if (now[index] !== enrolled[index]) return false;
   }
   return true;
 };
@@ -181,10 +185,10 @@ const mustBeExecuted = (job) => {
 
 const getTimeList = (date) => {
   return [
-    date.getMonth() + 1,
-    date.getDate(),
-    date.getHours(),
-    date.getMinutes(),
+    (date.getMonth() + 1).toString(),
+    date.getDate().toString(),
+    date.getHours().toString(),
+    date.getMinutes().toString(),
   ];
 };
 
@@ -199,28 +203,42 @@ app.post("/batch", (req, res) => {
       const heap = new Heap();
       jobList = result;
       for (let job of jobList) {
-        // console.log(job);
         if (job.month) {
-          if (
-            isTimePassed(getTimeList(now_to_date_format), [
-              parseInt(job.month),
-              parseInt(job.day),
-              parseInt(job.hour),
-              parseInt(job.minute),
-            ]) &&
-            mustBeExecuted(job)
-          ) {
-            heap.heappush(job);
-          } else console.log("not yet!");
+          if (!job.is_repeat) {
+            if (
+              isTimePassed(getTimeList(now_to_date_format), [
+                job.month,
+                job.day,
+                job.hour,
+                job.minute,
+              ]) &&
+              mustBeExecuted(job)
+            ) {
+              heap.heappush(job);
+            }
+          } else {
+            if (
+              isTimeMatched(getTimeList(now_to_date_format), [
+                job.month,
+                job.day,
+                job.hour,
+                job.minute,
+              ]) &&
+              mustBeExecuted(job)
+            ) {
+              heap.heappush(job);
+            }
+          }
         } else {
           console.log("condition!!");
         }
       }
 
+      if (heap.getLength() === 0) console.log("nothing to be executed!");
       while (heap.getLength() > 0) {
-        console.log("start : ", Date.now());
         const currJob = heap.heappop();
         execute(currJob);
+        console.log(currJob.name, "end!!", Date.now());
       }
     }
   });
