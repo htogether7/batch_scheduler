@@ -15,7 +15,7 @@ const insertConditionFlow = (body) => {
 };
 
 const insertTimeFlow = (body) => {
-  return `insert into flow values ("${body.enrolled_time}", "null);"`;
+  return `insert into flow values ("${body.enrolled_time}", null);`;
 };
 
 const insertExecutionTime = (body) => {
