@@ -23,7 +23,6 @@ class Heap {
       index = parentIndex;
       parentIndex = parseInt((index - 1) / 2);
     }
-    console.log("push", this.heap);
   }
 
   heappop() {
