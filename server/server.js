@@ -49,15 +49,6 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// connection.connect((err) => {
-//   if (err) {
-//     console.log("mysql connection error");
-//     throw err;
-//   } else {
-//     console.log("connect!");
-//   }
-// });
-
 app.get("/job", (req, res) => {
   connection.query(refTotalJobInfo, (err, result) => {
     if (err) throw err;
@@ -192,3 +183,63 @@ app.post("/batch", (req, res) => {
 app.listen(port, () => {
   console.log(`express is running on ${port}`);
 });
+
+const infiniteCheck = async (term) => {
+  const roofTerm = term;
+  while (true) {
+    if (roofTerm !== term) break;
+    await new Promise((r) => setTimeout(r, 200000)).then(() => {
+      console.log(`now term : ${200000}, time : ${Date.now()}`);
+      // axios
+      //   .post("http://localhost:5050/batch", { time: Date.now() })
+      //   .then((res) => {
+      //     console.log(res.data);
+      //     console.log("hi");
+      //   });
+      let jobList = [];
+      console.log("batch!!!", Date.now());
+      connection.query(refJobInfoJoinWithExecutionTime, (err, result) => {
+        if (err) throw err;
+        else {
+          const now_to_date_format = new Date(parseInt(req.body.time));
+          const heap = new Heap();
+          jobList = result;
+          for (let job of jobList) {
+            if (job.month) {
+              if (!job.is_repeat) {
+                if (
+                  isTimePassed(getTimeList(now_to_date_format), [
+                    job.month,
+                    job.day,
+                    job.hour,
+                    job.minute,
+                  ]) &&
+                  mustBeExecuted(job)
+                ) {
+                  heap.heappush(job);
+                }
+              } else {
+                if (
+                  isTimeMatched(getTimeList(now_to_date_format), [
+                    job.month,
+                    job.day,
+                    job.hour,
+                    job.minute,
+                  ]) &&
+                  mustBeExecuted(job)
+                ) {
+                  heap.heappush(job);
+                }
+              }
+            }
+          }
+
+          if (heap.getLength() === 0) console.log("nothing to be executed!");
+          totalExecute(heap);
+        }
+      });
+    });
+  }
+};
+
+infiniteCheck();
