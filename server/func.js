@@ -1,4 +1,21 @@
+const mysql = require("mysql");
 const mysql2 = require("mysql2/promise");
+const { execSync } = require("child_process");
+const {
+  updateCompleted,
+  calExecutionTime,
+  refJobInfoJoinWithFlow,
+} = require("./query");
+refJobInfoJoinWithFlow;
+
+const connection = mysql.createConnection({
+  host: "localhost",
+  port: 3306,
+  user: "root",
+  password: "sh12091209",
+  database: "scheduler",
+  dateStrings: "date",
+});
 
 const execute = (job) => {
   const start = Date.now();
