@@ -75,6 +75,7 @@ const Table = ({
 
   return (
     <>
+      <div>실행 대기중인 작업</div>
       <table>
         <tr>
           <th>이름</th>
@@ -95,14 +96,6 @@ const Table = ({
           />
         ))}
       </table>
-      <div>실행 대기중인 작업</div>
-      {/* <ul>
-        {jobs.map((job) => (
-          <Li
-            
-          />
-        ))} 
-      </ul> */}
     </>
   );
 };
