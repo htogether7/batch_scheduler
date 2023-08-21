@@ -184,24 +184,16 @@ app.listen(port, () => {
   console.log(`express is running on ${port}`);
 });
 
-const infiniteCheck = async (term) => {
-  const roofTerm = term;
+const infiniteCheck = async () => {
   while (true) {
-    if (roofTerm !== term) break;
-    await new Promise((r) => setTimeout(r, 200000)).then(() => {
-      console.log(`now term : ${200000}, time : ${Date.now()}`);
-      // axios
-      //   .post("http://localhost:5050/batch", { time: Date.now() })
-      //   .then((res) => {
-      //     console.log(res.data);
-      //     console.log("hi");
-      //   });
+    await new Promise((r) => setTimeout(r, 20000)).then(() => {
+      console.log(`now term : ${20000}, time : ${Date.now()}`);
       let jobList = [];
       console.log("batch!!!", Date.now());
       connection.query(refJobInfoJoinWithExecutionTime, (err, result) => {
         if (err) throw err;
         else {
-          const now_to_date_format = new Date(parseInt(req.body.time));
+          const now_to_date_format = new Date(Date.now());
           const heap = new Heap();
           jobList = result;
           for (let job of jobList) {
