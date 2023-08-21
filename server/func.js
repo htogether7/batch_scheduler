@@ -1,6 +1,7 @@
+const fs = require("fs");
 const mysql = require("mysql");
 const mysql2 = require("mysql2/promise");
-const { execSync, exec } = require("child_process");
+const { exec } = require("child_process");
 const {
   updateCompleted,
   calExecutionTime,
@@ -86,6 +87,10 @@ const execute = (job) => {
   return new Promise((resolve, reject) =>
     exec(`cd ../scripts && sh ${job.route}`, (err, stdout, stderr) => {
       console.log(stdout, new Date(Date.now()), job.name);
+      const content = `${job.name} 완료 - ${new Date(Date.now())} \n`;
+      fs.appendFile("../log/log.txt", content, (err) => {
+        if (err) console.log(err);
+      });
       const completed = Date.now();
       connection.query(updateCompleted(completed, job));
       const time = new Date(completed - start).getTime() / 1000;
