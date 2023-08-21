@@ -1,12 +1,11 @@
 const mysql = require("mysql");
 const mysql2 = require("mysql2/promise");
-const { execSync } = require("child_process");
+const { execSync, exec } = require("child_process");
 const {
   updateCompleted,
   calExecutionTime,
   refJobInfoJoinWithFlow,
 } = require("./query");
-refJobInfoJoinWithFlow;
 
 const connection = mysql.createConnection({
   host: "localhost",
@@ -16,17 +15,6 @@ const connection = mysql.createConnection({
   database: "scheduler",
   dateStrings: "date",
 });
-
-const execute = (job) => {
-  const start = Date.now();
-  console.log(execSync(`cd ../scripts && sh ${job.route}`).toString());
-
-  const completed = Date.now();
-  connection.query(updateCompleted(completed, job));
-
-  const time = new Date(completed - start).getTime() / 1000;
-  connection.query(calExecutionTime(job, time));
-};
 
 const isTimePassed = (now, enrolled) => {
   for (let index = 0; index < 4; index++) {
@@ -92,17 +80,30 @@ const getTimeList = (date) => {
   ];
 };
 
+const execute = (job) => {
+  const start = Date.now();
+
+  return new Promise((resolve, reject) =>
+    exec(`cd ../scripts && sh ${job.route}`, (err, stdout, stderr) => {
+      console.log(stdout, new Date(Date.now()), job.name);
+      const completed = Date.now();
+      connection.query(updateCompleted(completed, job));
+      const time = new Date(completed - start).getTime() / 1000;
+      connection.query(calExecutionTime(job, time));
+      resolve();
+    })
+  );
+};
+
 const totalExecute = async (heap) => {
   while (heap.getLength() > 0) {
     const currJob = heap.heappop();
-    execute(currJob);
+    await execute(currJob);
     await updateHeap(heap, currJob).then((res) => {
       for (let job of res) {
         heap.heappush(job);
       }
     });
-
-    console.log(currJob.name, "end!!", Date.now());
   }
 };
 
