@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import "./List.css";
+import "./Table.css";
 import axios from "axios";
-import Li from "../Li/Li";
+import TableRow from "../TableRow/TableRow";
 
-const List = ({
+const Table = ({
   jobs,
   setJobs,
   mode,
@@ -75,10 +75,17 @@ const List = ({
 
   return (
     <>
-      <div>실행 대기중인 작업</div>
-      <ul>
+      <table>
+        <tr>
+          <th>이름</th>
+          <th>실행 시간</th>
+          <th>선행 조건</th>
+          <th>파일명</th>
+          <th>흐름도</th>
+          <th></th>
+        </tr>
         {jobs.map((job) => (
-          <Li
+          <TableRow
             setSelectedCondition={setSelectedCondition}
             handleUpdateClick={handleUpdateClick}
             handleDeleteClick={handleDeleteClick}
@@ -87,9 +94,17 @@ const List = ({
             mode={mode}
           />
         ))}
-      </ul>
+      </table>
+      <div>실행 대기중인 작업</div>
+      {/* <ul>
+        {jobs.map((job) => (
+          <Li
+            
+          />
+        ))} 
+      </ul> */}
     </>
   );
 };
 
-export default React.memo(List);
+export default React.memo(Table);
