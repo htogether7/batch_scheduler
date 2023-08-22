@@ -7,7 +7,7 @@ const bodyParser = require("body-parser");
 const { execSync } = require("child_process");
 const { Heap } = require("./heap.js");
 const {
-  execute,
+  blockedExecute,
   isTimePassed,
   isTimeMatched,
   updateHeap,
@@ -32,6 +32,7 @@ const {
   refJobInfoJoinWithFlow,
   refJobInfoJoinWithExecutionTime,
   updateFlow,
+  deleteExecutionTime,
 } = require("./query.js");
 
 const port = 5050;
@@ -86,7 +87,7 @@ app.post("/job", (req, res) => {
       connection.query(sql2, (err, result) => {
         if (err) throw err;
       });
-
+      // console.log(req.body);
       connection.query(insertExecutionTime(req.body), (err, result) => {
         if (err) throw err;
       });
@@ -103,6 +104,7 @@ app.delete("/job", (req, res) => {
       connection.query(deleteFlow(req.query), (err, result) => {
         if (err) throw err;
       });
+      connection.query(deleteExecutionTime(req.query));
 
       connection.query(refTotalJobInfo, (err, result) => {
         res.json(result);
@@ -187,7 +189,7 @@ app.listen(port, () => {
 const infiniteCheck = async () => {
   while (true) {
     await new Promise((r) => setTimeout(r, 20000)).then(() => {
-      console.log(`now term : ${20000}, time : ${Date.now()}`);
+      // console.log(`now term : ${20000}, time : ${Date.now()}`);
       let jobList = [];
       console.log("batch!!!", Date.now());
       connection.query(refJobInfoJoinWithExecutionTime, (err, result) => {
@@ -227,7 +229,7 @@ const infiniteCheck = async () => {
           }
 
           if (heap.getLength() === 0) console.log("nothing to be executed!");
-          totalExecute(heap);
+          else totalExecute(heap);
         }
       });
     });
