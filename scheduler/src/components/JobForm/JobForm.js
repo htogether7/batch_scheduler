@@ -84,6 +84,10 @@ const JobForm = ({
   const handleJobSubmit = (e) => {
     e.preventDefault();
     const now = Date.now().toString();
+    if (jobs.filter((job) => job.name === nameInput)) {
+      alert("같은 이름을 가진 작업이 존재합니다!");
+      return;
+    }
     if (mode === "time") {
       if (validateTime(monthInput, dayInput, hourInput, minuteInput)) {
         axios
