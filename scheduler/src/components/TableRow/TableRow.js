@@ -13,9 +13,9 @@ const TableRow = ({
     return info === "*" ? "매" : info;
   };
 
-  const handleTrClick = (e) => {
+  const handleTableDivClick = (e) => {
     if (mode === "condition") {
-      setSelectedCondition(e.target.parentElement.id);
+      setSelectedCondition(e.target.parentElement.parentElement.id);
     }
   };
 
@@ -23,32 +23,48 @@ const TableRow = ({
     return jobs.filter((j) => j.enrolled_time === job.pre_condition);
   };
 
+  const addhandleDivClick = (content) => {
+    return <div onClick={handleTableDivClick}>{content}</div>;
+  };
+
   return (
-    <tr onClick={handleTrClick} id={job.enrolled_time} key={job.enrolled_time}>
-      <td>{job.name}</td>
+    <tr id={job.enrolled_time} key={job.enrolled_time} className="fill">
+      <td>{addhandleDivClick(job.name)}</td>
       <td>
-        {job.month
-          ? `${alwaysFilter(job.month)}월 ${alwaysFilter(
-              job.day
-            )}일 ${alwaysFilter(job.hour)}시 ${alwaysFilter(job.minute)}분`
-          : "-"}
+        {addhandleDivClick(
+          job.month
+            ? `${alwaysFilter(job.month)}월 ${alwaysFilter(
+                job.day
+              )}일 ${alwaysFilter(job.hour)}시 ${alwaysFilter(job.minute)}분`
+            : "-"
+        )}
       </td>
       <td>
-        {filterJobName(jobs, job).length > 0
-          ? filterJobName(jobs, job)[0].name
-          : "-"}
+        {addhandleDivClick(
+          filterJobName(jobs, job).length > 0
+            ? filterJobName(jobs, job)[0].name
+            : "-"
+        )}
       </td>
-      <td>{job.route}</td>
+      <td>{addhandleDivClick(job.route)}</td>
       <td>
-        <button>열기</button>
+        {addhandleDivClick(
+          <div onClick={handleTableDivClick}>
+            <button>열기</button>
+          </div>
+        )}
       </td>
       <td>
-        <button onClick={handleUpdateClick} id={job.enrolled_time}>
-          수정
-        </button>
-        <button onClick={handleDeleteClick} id={job.enrolled_time}>
-          삭제
-        </button>
+        {addhandleDivClick(
+          <div onClick={handleTableDivClick}>
+            <button onClick={handleUpdateClick} id={job.enrolled_time}>
+              수정
+            </button>
+            <button onClick={handleDeleteClick} id={job.enrolled_time}>
+              삭제
+            </button>
+          </div>
+        )}
       </td>
     </tr>
   );

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import "./Table.css";
 import axios from "axios";
 import TableRow from "../TableRow/TableRow";
+import Pagination from "../Pagination/Pagination";
+import EmptyRow from "../TableRow/EmptyRow";
 
 const Table = ({
   jobs,
@@ -21,6 +23,8 @@ const Table = ({
   setRoute,
   setSelectedId,
   monthInput,
+  pageNum,
+  setPageNum,
 }) => {
   const handleUpdateClick = (e) => {
     setMonthInput("");
@@ -58,6 +62,7 @@ const Table = ({
       await axios
         .delete(`http://localhost:5050/job?id=${e.target.id}`)
         .then((res) => {
+          console.log(e.target);
           setJobs(res.data);
         });
     };
@@ -85,7 +90,7 @@ const Table = ({
           <th>흐름도</th>
           <th></th>
         </tr>
-        {jobs.map((job) => (
+        {jobs.slice(pageNum * 10, pageNum * 10 + 10).map((job) => (
           <TableRow
             setSelectedCondition={setSelectedCondition}
             handleUpdateClick={handleUpdateClick}
@@ -95,7 +100,19 @@ const Table = ({
             mode={mode}
           />
         ))}
+        {new Array(10 - jobs.slice(pageNum * 10, pageNum * 10 + 10).length)
+          .fill(0)
+          .map(() => (
+            <EmptyRow />
+          ))}
       </table>
+      <Pagination
+        jobs={jobs}
+        pageNum={pageNum}
+        setPageNum={setPageNum}
+        // sectionNum={sectionNum}
+        // setSectionNum={setSectionNum}
+      />
     </>
   );
 };

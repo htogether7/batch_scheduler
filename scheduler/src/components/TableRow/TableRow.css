@@ -1,8 +1,16 @@
-tr:hover {
+tr.fill:hover {
   background-color: yellow;
 }
 
 tr {
   cursor: pointer;
   border: 1px solid black;
+}
+/* 
+td {
+  line-height: 100%;
+} */
+
+td > div {
+  height: 30px;
 }

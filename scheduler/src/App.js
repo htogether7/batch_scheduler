@@ -10,7 +10,7 @@ function App() {
   const [mode, setMode] = useState("time");
   // const [termInput, setTermInput] = useState(0);
   const [selectedCondition, setSelectedCondition] = useState("");
-  const term = useRef(30000);
+  // const term = useRef(30000);
   const [isEditting, setIsEditting] = useState(false);
   const [monthInput, setMonthInput] = useState("");
   const [dayInput, setDayInput] = useState("");
@@ -20,6 +20,7 @@ function App() {
   const [fileMode, setFileMode] = useState(false);
   const [route, setRoute] = useState("");
   const [selectedId, setSelectedId] = useState("");
+  const [pageNum, setPageNum] = useState(0);
 
   useEffect(() => {
     axios
@@ -47,6 +48,8 @@ function App() {
         selectedId={selectedId}
         setSelectedId={setSelectedId}
         monthInput={monthInput}
+        pageNum={pageNum}
+        setPageNum={setPageNum}
       />
       <JobForm
         mode={mode}

@@ -8,6 +8,10 @@ li {
   transition: background-color 0.7s;
 }
 
-td:hover {
+th {
   background-color: yellow;
 }
+/* 
+td:hover {
+  background-color: yellow;
+} */
