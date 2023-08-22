@@ -19,7 +19,7 @@ const insertTimeFlow = (body) => {
 };
 
 const insertExecutionTime = (body) => {
-  return ` insert ignore into expected_execution_time values ("${body.name}", 0,0);`;
+  return ` insert ignore into expected_execution_time values ("${body.enrolled_time}", 0,0);`;
 };
 
 const deleteJobInfo = (query) => {
@@ -28,6 +28,10 @@ const deleteJobInfo = (query) => {
 
 const deleteFlow = (query) => {
   return `delete from flow where process = "${query.id}" || pre_condition = "${query.id}";`;
+};
+
+const deleteExecutionTime = (query) => {
+  return `delete from expected_execution_time where id = "${query.id}"`;
 };
 
 const updateTimeJob = (timeInfo, id) => {
@@ -49,7 +53,7 @@ const updateCompleted = (completed, job) => {
 };
 
 const calExecutionTime = (job, time) => {
-  return `INSERT INTO expected_execution_time VALUES ("${job.name}", ${time},1)
+  return `INSERT INTO expected_execution_time VALUES ("${job.enrolled_time}", ${time},1)
   ON DUPLICATE KEY
   UPDATE execution_count = execution_count + 1, expected_time = ((expected_time * execution_count)+${time}) / (execution_count + 1);`;
 };
@@ -61,7 +65,11 @@ const refJobInfoJoinWithFlow = (job) => {
     where flow.pre_condition = "${job.enrolled_time}"`;
 };
 
-const refJobInfoJoinWithExecutionTime = `select * from job_info join expected_execution_time on job_info.name = expected_execution_time.name;`;
+const refJobInfoJoinWithExecutionTime = `select * from job_info join expected_execution_time on job_info.enrolled_time = expected_execution_time.id;`;
+
+const checkPreCondition = (id) => {
+  return `select * from flow where pre_condition = "${id}"`;
+};
 
 module.exports = {
   refTotalJobInfo,
@@ -79,4 +87,6 @@ module.exports = {
   calExecutionTime,
   refJobInfoJoinWithFlow,
   refJobInfoJoinWithExecutionTime,
+  checkPreCondition,
+  deleteExecutionTime,
 };
