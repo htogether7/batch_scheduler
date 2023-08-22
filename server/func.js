@@ -6,6 +6,7 @@ const {
   updateCompleted,
   calExecutionTime,
   refJobInfoJoinWithFlow,
+  checkPreCondition,
 } = require("./query");
 
 const connection = mysql.createConnection({
@@ -81,29 +82,54 @@ const getTimeList = (date) => {
   ];
 };
 
-const execute = (job) => {
+const execute = (job, blocked, resolve) => {
   const start = Date.now();
-
-  return new Promise((resolve, reject) =>
-    exec(`cd ../scripts && sh ${job.route}`, (err, stdout, stderr) => {
-      console.log(stdout, new Date(Date.now()), job.name);
-      const content = `${job.name} 완료 - ${new Date(Date.now())} \n`;
-      fs.appendFile("../log/log.txt", content, (err) => {
-        if (err) console.log(err);
-      });
-      const completed = Date.now();
-      connection.query(updateCompleted(completed, job));
+  exec(`cd ../scripts && sh ${job.route}`, (err, stdout, stderr) => {
+    console.log(stdout, new Date(Date.now()), job.name);
+    const content = `${job.name} 완료 - ${new Date(Date.now())} \n`;
+    fs.appendFile("../log/log.txt", content, (err) => {
+      if (err) console.log(err);
+    });
+    const completed = Date.now();
+    connection.query(updateCompleted(completed, job));
+    if (blocked) {
       const time = new Date(completed - start).getTime() / 1000;
       connection.query(calExecutionTime(job, time));
       resolve();
-    })
+    }
+  });
+};
+
+const blockedExecute = (job) => {
+  return new Promise((resolve, reject) => execute(job, true, resolve));
+};
+
+const isPreCondition = async (job) => {
+  const asyncConnection = await mysql2.createConnection({
+    host: "localhost",
+    port: 3306,
+    user: "root",
+    password: "sh12091209",
+    database: "scheduler",
+    dateStrings: "date",
+  });
+
+  const [result] = await asyncConnection.query(
+    checkPreCondition(job.enrolled_time)
   );
+
+  return result.length > 0 ? true : false;
 };
 
 const totalExecute = async (heap) => {
   while (heap.getLength() > 0) {
     const currJob = heap.heappop();
-    await execute(currJob);
+    const checkPreCondition = await isPreCondition(currJob);
+    if (checkPreCondition) {
+      await blockedExecute(currJob);
+    } else {
+      execute(currJob, false);
+    }
     await updateHeap(heap, currJob).then((res) => {
       for (let job of res) {
         heap.heappush(job);
@@ -113,7 +139,7 @@ const totalExecute = async (heap) => {
 };
 
 module.exports = {
-  execute,
+  blockedExecute,
   isTimePassed,
   isTimeMatched,
   updateHeap,
