@@ -164,10 +164,18 @@ const JobForm = ({
           value={nameInput}
         />
         <br></br>
-        <button type="button" onClick={handleTimeButton}>
+        <button
+          type="button"
+          onClick={handleTimeButton}
+          disabled={isEditting ? true : false}
+        >
           주기
         </button>
-        <button type="button" onClick={handleConditionButton}>
+        <button
+          type="button"
+          onClick={handleConditionButton}
+          disabled={isEditting ? true : false}
+        >
           조건
         </button>
         <br></br>
