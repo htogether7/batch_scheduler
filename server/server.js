@@ -87,7 +87,7 @@ app.post("/job", (req, res) => {
       connection.query(sql2, (err, result) => {
         if (err) throw err;
       });
-      // console.log(req.body);
+
       connection.query(insertExecutionTime(req.body), (err, result) => {
         if (err) throw err;
       });
@@ -136,52 +136,6 @@ app.put("/job", (req, res) => {
   });
 });
 
-app.post("/batch", (req, res) => {
-  let jobList = [];
-  console.log("batch!!!", Date.now());
-  connection.query(refJobInfoJoinWithExecutionTime, (err, result) => {
-    if (err) throw err;
-    else {
-      const now_to_date_format = new Date(parseInt(req.body.time));
-      const heap = new Heap();
-      jobList = result;
-      for (let job of jobList) {
-        if (job.month) {
-          if (!job.is_repeat) {
-            if (
-              isTimePassed(getTimeList(now_to_date_format), [
-                job.month,
-                job.day,
-                job.hour,
-                job.minute,
-              ]) &&
-              mustBeExecuted(job)
-            ) {
-              heap.heappush(job);
-            }
-          } else {
-            if (
-              isTimeMatched(getTimeList(now_to_date_format), [
-                job.month,
-                job.day,
-                job.hour,
-                job.minute,
-              ]) &&
-              mustBeExecuted(job)
-            ) {
-              heap.heappush(job);
-            }
-          }
-        }
-      }
-
-      if (heap.getLength() === 0) console.log("nothing to be executed!");
-      totalExecute(heap);
-    }
-  });
-  res.json({ success: 1 });
-});
-
 app.listen(port, () => {
   console.log(`express is running on ${port}`);
 });
@@ -189,7 +143,6 @@ app.listen(port, () => {
 const infiniteCheck = async () => {
   while (true) {
     await new Promise((r) => setTimeout(r, 20000)).then(() => {
-      // console.log(`now term : ${20000}, time : ${Date.now()}`);
       let jobList = [];
       console.log("batch!!!", Date.now());
       connection.query(refJobInfoJoinWithExecutionTime, (err, result) => {
