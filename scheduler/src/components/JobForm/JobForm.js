@@ -229,7 +229,9 @@ const JobForm = ({
               onChange={handleConditionInput}
               required
               value={
-                selectedCondition
+                selectedCondition &&
+                jobs.filter((job) => job.enrolled_time === selectedCondition)
+                  .length > 0
                   ? jobs.filter(
                       (job) => job.enrolled_time === selectedCondition
                     )[0].name

@@ -40,7 +40,7 @@ const Table = ({
     setSelectedId(selectedJob.enrolled_time);
     setNameInput(selectedJob.name);
     if (selectedJob.pre_condition) {
-      setSelectedCondition(selectedJob.pre_condition);
+      setSelectedCondition(selectedJob.pre_condition || "");
     } else {
       setMonthInput(selectedJob.month);
       setDayInput(selectedJob.day);
@@ -84,7 +84,7 @@ const Table = ({
       <table>
         <tr>
           <th>이름</th>
-          <th>실행 시간</th>
+          <th style={{ width: "200px" }}>실행 시간</th>
           <th>선행 조건</th>
           <th>파일명</th>
           <th>흐름도</th>
