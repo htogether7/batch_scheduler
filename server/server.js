@@ -44,6 +44,7 @@ const connection = mysql.createConnection({
   password: "sh12091209",
   database: "scheduler",
   dateStrings: "date",
+  connectionLimit: 10,
 });
 
 app.use(cors());

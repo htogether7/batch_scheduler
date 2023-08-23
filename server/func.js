@@ -16,6 +16,7 @@ const connection = mysql.createConnection({
   password: "sh12091209",
   database: "scheduler",
   dateStrings: "date",
+  connectionLimit: 10,
 });
 
 const isTimePassed = (now, enrolled) => {
@@ -48,6 +49,7 @@ const updateHeap = async (heap, currJob) => {
     password: "sh12091209",
     database: "scheduler",
     dateStrings: "date",
+    connectionLimit: 10,
   });
   const [result] = await asyncConnection.query(refJobInfoJoinWithFlow(currJob));
   return result;
@@ -119,8 +121,6 @@ const isPreCondition = async (job) => {
   const [result] = await asyncConnection.query(
     checkPreCondition(job.enrolled_time)
   );
-
-  asyncConnection.end();
 
   return result.length > 0 ? true : false;
 };
