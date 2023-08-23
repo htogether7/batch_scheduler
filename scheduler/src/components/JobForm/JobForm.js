@@ -218,7 +218,13 @@ const JobForm = ({
               type="text"
               onChange={handleConditionInput}
               required
-              value={selectedCondition}
+              value={
+                selectedCondition
+                  ? jobs.filter(
+                      (job) => job.enrolled_time === selectedCondition
+                    )[0].name
+                  : ""
+              }
               disabled
             />
           </>
