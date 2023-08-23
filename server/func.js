@@ -52,6 +52,7 @@ const updateHeap = async (heap, currJob) => {
     connectionLimit: 10,
   });
   const [result] = await asyncConnection.query(refJobInfoJoinWithFlow(currJob));
+  asyncConnection.end();
   return result;
 };
 
@@ -121,6 +122,7 @@ const isPreCondition = async (job) => {
   const [result] = await asyncConnection.query(
     checkPreCondition(job.enrolled_time)
   );
+  asyncConnection.end();
 
   return result.length > 0 ? true : false;
 };
