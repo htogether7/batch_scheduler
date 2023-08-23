@@ -91,6 +91,8 @@ const execute = (job, blocked, resolve) => {
       if (err) console.log(err);
     });
     const completed = Date.now();
+    // console.log(new Date(completed).getSeconds());
+
     connection.query(updateCompleted(completed, job));
     if (blocked) {
       const time = new Date(completed - start).getTime() / 1000;
@@ -117,6 +119,8 @@ const isPreCondition = async (job) => {
   const [result] = await asyncConnection.query(
     checkPreCondition(job.enrolled_time)
   );
+
+  asyncConnection.end();
 
   return result.length > 0 ? true : false;
 };
