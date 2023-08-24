@@ -1,14 +1,15 @@
 .node {
   display: block;
-  font: 20px;
+  font-size: 15px;
   border-radius: 2px;
   padding: 5px;
   margin-top: 30px;
   margin-bottom: 30px;
+  border: 1px solid black;
 }
 
 .selected {
   background-color: yellow;
-  border: 1px solid black;
   border-radius: 2px;
+  font-size: 20px;
 }
