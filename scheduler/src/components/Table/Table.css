@@ -4,14 +4,40 @@ ul {
 
 li {
   cursor: pointer;
-  border: 1px solid black;
+
   transition: background-color 0.7s;
 }
 
-th {
-  background-color: yellow;
+table {
+  border: 1px #a39485 solid;
+  font-size: 0.9em;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 5px;
+  overflow: hidden;
 }
-/* 
-td:hover {
+
+th {
+  font-weight: bold;
   background-color: yellow;
-} */
+  /* border: 1px solid black; */
+  text-align: center;
+}
+
+td,
+th {
+  padding: 1em;
+  vertical-align: middle;
+}
+
+td {
+  border-bottom: 1px solid rgba(0, 0, 0, 1);
+  background: #fff;
+}
+
+td > div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
