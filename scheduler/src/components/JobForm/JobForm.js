@@ -150,6 +150,8 @@ const JobForm = ({
       });
   };
 
+  const handleGraph = () => {};
+
   const handleFileChange = (e) => {
     setRoute(e.target.value);
   };
@@ -164,107 +166,111 @@ const JobForm = ({
   };
 
   return (
-    <>
-      <form onSubmit={isEditting ? handleJobUpdate : handleJobSubmit}>
-        <div className="title">{isEditting ? "작업 수정" : "작업 등록"}</div>
-        <input
-          type="text"
-          required
-          onChange={handleNameInput}
-          value={nameInput}
-        />
-        <br></br>
-        <button
-          type="button"
-          onClick={handleTimeButton}
-          disabled={isEditting ? true : false}
-        >
-          주기
-        </button>
-        <button
-          type="button"
-          onClick={handleConditionButton}
-          disabled={isEditting ? true : false}
-        >
-          조건
-        </button>
-        <br></br>
-        {mode === "time" ? (
-          <>
-            <TimeInput
-              id="month"
-              content="월"
-              func={setMonthInput}
-              value={monthInput}
-              required
-            />
-            <TimeInput
-              id="day"
-              content="일"
-              func={setDayInput}
-              value={dayInput}
-              required
-            />
-            <TimeInput
-              id="hour"
-              content="시"
-              func={setHourInput}
-              value={hourInput}
-              required
-            />
-            <TimeInput
-              id="minute"
-              content="분"
-              func={setMinuteInput}
-              value={minuteInput}
-              required
-            />
-          </>
-        ) : (
-          <>
-            <label for="conditionInput">선행 조건</label>
+    <div>
+      <div className="title">{isEditting ? "작업 수정" : "작업 등록"}</div>
+      <div className="formContainer">
+        <form onSubmit={isEditting ? handleJobUpdate : handleJobSubmit}>
+          <div>
+            <label for="nameInput">이름</label>
             <input
-              id="conditionInput"
+              id="nameInput"
               type="text"
-              onChange={handleConditionInput}
               required
-              value={selectedCondition || ""}
-              disabled
+              onChange={handleNameInput}
+              value={nameInput}
             />
-          </>
-        )}
-        <br />
-        {!isEditting ? (
-          <input
-            id="fileInput"
-            type="file"
-            onChange={handleFileChange}
-            required
-          />
-        ) : !fileMode ? (
-          <button
-            type="button"
-            onClick={() => {
-              setFileMode(true);
-            }}
-          >
-            Update File
+          </div>
+          <div>
+            <button
+              type="button"
+              onClick={handleTimeButton}
+              disabled={isEditting ? true : false}
+            >
+              주기
+            </button>
+            <button
+              type="button"
+              onClick={handleConditionButton}
+              disabled={isEditting ? true : false}
+            >
+              조건
+            </button>
+          </div>
+          {mode === "time" ? (
+            <div>
+              <TimeInput
+                id="month"
+                content="월"
+                func={setMonthInput}
+                value={monthInput}
+                required
+              />
+              <TimeInput
+                id="day"
+                content="일"
+                func={setDayInput}
+                value={dayInput}
+                required
+              />
+              <TimeInput
+                id="hour"
+                content="시"
+                func={setHourInput}
+                value={hourInput}
+                required
+              />
+              <TimeInput
+                id="minute"
+                content="분"
+                func={setMinuteInput}
+                value={minuteInput}
+                required
+              />
+            </div>
+          ) : (
+            <>
+              <label for="conditionInput">선행 조건</label>
+              <input
+                id="conditionInput"
+                type="text"
+                onChange={handleConditionInput}
+                required
+                value={selectedCondition || ""}
+                disabled
+              />
+            </>
+          )}
+          {!isEditting ? (
+            <input
+              id="fileInput"
+              type="file"
+              onChange={handleFileChange}
+              required
+            />
+          ) : !fileMode ? (
+            <button
+              type="button"
+              onClick={() => {
+                setFileMode(true);
+              }}
+            >
+              Update File
+            </button>
+          ) : (
+            <input
+              id="fileInput"
+              type="file"
+              onChange={handleFileChange}
+              required
+            />
+          )}
+          <button type="submit">제출</button>
+          <button type="button" onClick={handleCancelClick}>
+            취소
           </button>
-        ) : (
-          <input
-            id="fileInput"
-            type="file"
-            onChange={handleFileChange}
-            required
-          />
-        )}
-        <button type="submit">제출</button>
-        <button type="button" onClick={handleCancelClick}>
-          취소
-        </button>
-      </form>
-      <button className="resetButton">전체 작업 초기화</button>
-    </>
+        </form>
+      </div>
+    </div>
   );
 };
 

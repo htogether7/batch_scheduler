@@ -154,7 +154,7 @@ app.get("/flow", (req, res) => {
       }
       res.json({
         pre: pre,
-        curr: name,
+        curr: [name],
         post: post,
       });
     }

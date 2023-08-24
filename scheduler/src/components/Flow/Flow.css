@@ -11,3 +11,8 @@
 .flowContainer {
   margin-top: 20px;
 }
+
+.nodeContainer {
+  display: flex;
+  justify-content: space-around;
+}

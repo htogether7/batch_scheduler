@@ -1,5 +1,6 @@
 import React from "react";
 import "./TableRow.css";
+import axios from "axios";
 
 const TableRow = ({
   handleDeleteClick,
@@ -8,6 +9,9 @@ const TableRow = ({
   jobs,
   setSelectedCondition,
   mode,
+  setSelectedNode,
+  graph,
+  setGraph,
 }) => {
   const alwaysFilter = (info) => {
     return info === "*" ? "매" : info;
@@ -27,9 +31,18 @@ const TableRow = ({
     return <div onClick={handleTableDivClick}>{content}</div>;
   };
 
+  const handleFlowClick = (e) => {
+    axios.get(`http://localhost:5050/flow?name=${e.target.id}`).then((res) => {
+      setGraph([res.data.pre, res.data.curr, res.data.post]);
+    });
+    setSelectedNode(e.target.id);
+  };
+
   return (
     <tr id={job.name} key={job.enrolled_time} className="fill">
-      <td>{addhandleDivClick(job.name)}</td>
+      <td>
+        <b>{addhandleDivClick(job.name)}</b>
+      </td>
       <td>
         {addhandleDivClick(
           job.month
@@ -50,7 +63,9 @@ const TableRow = ({
       <td>
         {addhandleDivClick(
           <div onClick={handleTableDivClick}>
-            <button>열기</button>
+            <button onClick={handleFlowClick} id={job.name}>
+              보기
+            </button>
           </div>
         )}
       </td>
@@ -60,7 +75,11 @@ const TableRow = ({
             <button onClick={handleUpdateClick} name={job.name}>
               수정
             </button>
-            <button onClick={handleDeleteClick} name={job.name}>
+            <button
+              onClick={handleDeleteClick}
+              name={job.name}
+              id={job.enrolled_time}
+            >
               삭제
             </button>
           </div>
