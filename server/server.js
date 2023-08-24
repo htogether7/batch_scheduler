@@ -116,7 +116,7 @@ app.delete("/job", (req, res) => {
 
 app.put("/job", (req, res) => {
   const { id } = req.query;
-  const { month } = req.body;
+  const { month, name } = req.body;
   let sql = "";
   if (month) {
     sql = updateTimeJob(req.body, id);
@@ -126,7 +126,7 @@ app.put("/job", (req, res) => {
   connection.query(sql, (err, result) => {
     if (err) throw err;
     else {
-      connection.query(updateFlow(req.body, id));
+      connection.query(updateFlow(req.body, name));
       connection.query(refTotalJobInfo, (err, result) => {
         if (err) throw err;
         else {

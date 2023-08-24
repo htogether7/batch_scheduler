@@ -11,11 +11,11 @@ const insertConditionJob = (body, is_repeat) => {
 };
 
 const insertConditionFlow = (body) => {
-  return `insert into flow values ("${body.enrolled_time}","${body.pre_condition}");`;
+  return `insert into flow values ("${body.name}","${body.pre_condition}");`;
 };
 
 const insertTimeFlow = (body) => {
-  return `insert into flow values ("${body.enrolled_time}", null);`;
+  return `insert into flow values ("${body.name}", null);`;
 };
 
 const insertExecutionTime = (body) => {
@@ -23,7 +23,7 @@ const insertExecutionTime = (body) => {
 };
 
 const deleteJobInfo = (query) => {
-  return `delete from job_info where enrolled_time ="${query.id}";`;
+  return `delete from job_info where enrolled_time ="${query.name}";`;
 };
 
 const deleteFlow = (query) => {
@@ -42,8 +42,8 @@ const updateConditionJob = (timeInfo, id) => {
   return `update job_info set name="${timeInfo.name}",route="${timeInfo.route}",pre_condition="${timeInfo.pre_condition}" where enrolled_time="${id}"`;
 };
 
-const updateFlow = (timeInfo, id) => {
-  return `update flow set pre_condition="${timeInfo.pre_condition}" where process = "${id}"`;
+const updateFlow = (timeInfo, name) => {
+  return `update flow set pre_condition="${timeInfo.pre_condition}" where process = "${name}"`;
 };
 
 const updateCompleted = (completed, job) => {
@@ -61,14 +61,14 @@ const calExecutionTime = (job, time) => {
 const refJobInfoJoinWithFlow = (job) => {
   return `select * from job_info
     join flow 
-    on job_info.enrolled_time = flow.process
-    where flow.pre_condition = "${job.enrolled_time}"`;
+    on job_info.name = flow.process
+    where flow.pre_condition = "${job.name}"`;
 };
 
 const refJobInfoJoinWithExecutionTime = `select * from job_info join expected_execution_time on job_info.enrolled_time = expected_execution_time.id;`;
 
-const checkPreCondition = (id) => {
-  return `select * from flow where pre_condition = "${id}"`;
+const checkPreCondition = (name) => {
+  return `select * from flow where pre_condition = "${name}"`;
 };
 
 module.exports = {

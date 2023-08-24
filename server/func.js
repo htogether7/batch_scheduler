@@ -119,9 +119,7 @@ const isPreCondition = async (job) => {
     dateStrings: "date",
   });
 
-  const [result] = await asyncConnection.query(
-    checkPreCondition(job.enrolled_time)
-  );
+  const [result] = await asyncConnection.query(checkPreCondition(job.name));
   asyncConnection.end();
 
   return result.length > 0 ? true : false;
