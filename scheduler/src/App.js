@@ -86,6 +86,7 @@ function App() {
             setRoute={setRoute}
             selectedId={selectedId}
             setSelectedId={setSelectedId}
+            setGraph={setGraph}
           />
           <Flow selectedNode={selectedNode} graph={graph} />
         </div>

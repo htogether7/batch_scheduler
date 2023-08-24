@@ -29,6 +29,7 @@ const JobForm = ({
   setRoute,
   selectedId,
   setSelectedId,
+  setGraph,
 }) => {
   const resetTimeInput = () => {
     setMonthInput("");
@@ -101,7 +102,10 @@ const JobForm = ({
             enrolled_time: now,
             route: route.split("\\")[2],
           })
-          .then((res) => setJobs([...jobs, res.data]));
+          .then((res) => {
+            setJobs([...jobs, res.data]);
+            setGraph([]);
+          });
       } else {
         alert("시간을 다시한번 확인해주세요");
       }
@@ -115,6 +119,7 @@ const JobForm = ({
         })
         .then((res) => {
           setJobs([...jobs, res.data]);
+          setGraph([]);
         });
     }
   };
@@ -147,10 +152,9 @@ const JobForm = ({
         resetTimeInput();
         setRoute("");
         setSelectedCondition("");
+        setGraph([]);
       });
   };
-
-  const handleGraph = () => {};
 
   const handleFileChange = (e) => {
     setRoute(e.target.value);

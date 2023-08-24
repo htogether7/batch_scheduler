@@ -72,6 +72,7 @@ const Table = ({
         )
         .then((res) => {
           setJobs(res.data);
+          setGraph([]);
         });
     };
     requestJobDelete();
