@@ -2,12 +2,11 @@ import React from "react";
 
 const TimeInput = ({ id, content, func, value }) => {
   const funcFormat = (e) => {
-    func(e.target.value);
+    return func(e.target.value);
   };
 
   return (
     <>
-      <label for={id}>{content}</label>
       <input
         id={id}
         className="timeInput"
@@ -15,6 +14,7 @@ const TimeInput = ({ id, content, func, value }) => {
         onChange={funcFormat}
         value={value}
       />
+      <label for={id}>{content}</label>
     </>
   );
 };
