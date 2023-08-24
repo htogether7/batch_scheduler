@@ -33,6 +33,7 @@ const {
   refJobInfoJoinWithExecutionTime,
   updateFlow,
   deleteExecutionTime,
+  refFlow,
 } = require("./query.js");
 
 const port = 5050;
@@ -132,6 +133,29 @@ app.put("/job", (req, res) => {
         else {
           res.json(result);
         }
+      });
+    }
+  });
+});
+
+app.get("/flow", (req, res) => {
+  const { name } = req.query;
+  connection.query(refFlow(name), (err, result) => {
+    if (err) throw err;
+    else {
+      const pre = [];
+      const post = [];
+      for (let graph of result) {
+        if (graph.pre_condition) {
+          if (graph.process === name && graph.pre_condition)
+            pre.push(graph.pre_condition);
+          if (graph.pre_condition === name) post.push(graph.process);
+        }
+      }
+      res.json({
+        pre: pre,
+        curr: name,
+        post: post,
       });
     }
   });

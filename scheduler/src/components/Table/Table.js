@@ -26,6 +26,10 @@ const Table = ({
   monthInput,
   pageNum,
   setPageNum,
+  selectedNode,
+  setSelectedNode,
+  graph,
+  setGraph,
 }) => {
   const handleUpdateClick = (e) => {
     setMonthInput("");
@@ -63,7 +67,9 @@ const Table = ({
   const handleDeleteClick = (e) => {
     const requestJobDelete = async () => {
       await axios
-        .delete(`http://localhost:5050/job?id=${e.target.name}`)
+        .delete(
+          `http://localhost:5050/job?name=${e.target.name}&id=${e.target.id}`
+        )
         .then((res) => {
           setJobs(res.data);
         });
@@ -81,8 +87,8 @@ const Table = ({
   }, []);
 
   return (
-    <>
-      <div>실행 대기중인 작업</div>
+    <div>
+      <div className="title">실행 대기중인 작업</div>
       <table>
         <tr>
           <th>이름</th>
@@ -90,7 +96,7 @@ const Table = ({
           <th>선행 조건</th>
           <th>파일명</th>
           <th>흐름도</th>
-          <th></th>
+          <th>수정/삭제</th>
         </tr>
         {jobs.slice(pageNum * 10, pageNum * 10 + 10).map((job) => (
           <TableRow
@@ -100,6 +106,9 @@ const Table = ({
             job={job}
             jobs={jobs}
             mode={mode}
+            setSelectedNode={setSelectedNode}
+            graph={graph}
+            setGraph={setGraph}
           />
         ))}
         {new Array(10 - jobs.slice(pageNum * 10, pageNum * 10 + 10).length)
@@ -115,7 +124,7 @@ const Table = ({
         // sectionNum={sectionNum}
         // setSectionNum={setSectionNum}
       />
-    </>
+    </div>
   );
 };
 

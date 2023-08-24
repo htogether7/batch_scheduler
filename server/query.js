@@ -23,11 +23,11 @@ const insertExecutionTime = (body) => {
 };
 
 const deleteJobInfo = (query) => {
-  return `delete from job_info where enrolled_time ="${query.name}";`;
+  return `delete from job_info where name ="${query.name}";`;
 };
 
 const deleteFlow = (query) => {
-  return `delete from flow where process = "${query.id}" || pre_condition = "${query.id}";`;
+  return `delete from flow where process = "${query.name}" || pre_condition = "${query.name}";`;
 };
 
 const deleteExecutionTime = (query) => {
@@ -71,6 +71,10 @@ const checkPreCondition = (name) => {
   return `select * from flow where pre_condition = "${name}"`;
 };
 
+const refFlow = (name) => {
+  return `select * from flow where process=${name} || pre_condition=${name}`;
+};
+
 module.exports = {
   refTotalJobInfo,
   insertTimeJob,
@@ -89,4 +93,5 @@ module.exports = {
   refJobInfoJoinWithExecutionTime,
   checkPreCondition,
   deleteExecutionTime,
+  refFlow,
 };
