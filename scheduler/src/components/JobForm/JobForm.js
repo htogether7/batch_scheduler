@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./JobForm.css";
 import TimeInput from "../TimeInput/TimeInput";
@@ -228,15 +228,7 @@ const JobForm = ({
               type="text"
               onChange={handleConditionInput}
               required
-              value={
-                selectedCondition &&
-                jobs.filter((job) => job.enrolled_time === selectedCondition)
-                  .length > 0
-                  ? jobs.filter(
-                      (job) => job.enrolled_time === selectedCondition
-                    )[0].name
-                  : ""
-              }
+              value={selectedCondition || ""}
               disabled
             />
           </>

@@ -20,7 +20,7 @@ const TableRow = ({
   };
 
   const filterJobName = (jobs, job) => {
-    return jobs.filter((j) => j.enrolled_time === job.pre_condition);
+    return jobs.filter((j) => j.name === job.pre_condition);
   };
 
   const addhandleDivClick = (content) => {
@@ -28,7 +28,7 @@ const TableRow = ({
   };
 
   return (
-    <tr id={job.enrolled_time} key={job.enrolled_time} className="fill">
+    <tr id={job.name} key={job.enrolled_time} className="fill">
       <td>{addhandleDivClick(job.name)}</td>
       <td>
         {addhandleDivClick(
@@ -57,10 +57,10 @@ const TableRow = ({
       <td>
         {addhandleDivClick(
           <div onClick={handleTableDivClick}>
-            <button onClick={handleUpdateClick} id={job.enrolled_time}>
+            <button onClick={handleUpdateClick} name={job.name}>
               수정
             </button>
-            <button onClick={handleDeleteClick} id={job.enrolled_time}>
+            <button onClick={handleDeleteClick} name={job.name}>
               삭제
             </button>
           </div>

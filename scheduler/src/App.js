@@ -34,6 +34,7 @@ function App() {
         jobs={submittedJobs}
         setJobs={setSubmittedJobs}
         mode={mode}
+        selectedCondition={selectedCondition}
         setSelectedCondition={setSelectedCondition}
         isEditting={isEditting}
         setIsEditting={setIsEditting}

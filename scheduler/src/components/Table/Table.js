@@ -9,6 +9,7 @@ const Table = ({
   jobs,
   setJobs,
   mode,
+  selectedCondition,
   setSelectedCondition,
   isEditting,
   setIsEditting,
@@ -34,24 +35,26 @@ const Table = ({
     setNameInput("");
     setRoute("");
     setSelectedCondition("");
-    const selectedJob = jobs.filter(
-      (job) => job.enrolled_time === e.target.id
-    )[0];
+    const selectedJob = jobs.filter((job) => job.name === e.target.name)[0];
+
     setSelectedId(selectedJob.enrolled_time);
     setNameInput(selectedJob.name);
-    if (selectedJob.pre_condition) {
-      setSelectedCondition(selectedJob.pre_condition || "");
-    } else {
+
+    if (selectedJob.month) {
       setMonthInput(selectedJob.month);
       setDayInput(selectedJob.day);
       setHourInput(selectedJob.hour);
       setMinuteInput(selectedJob.minute);
+    } else {
+      setSelectedCondition(selectedJob.pre_condition || "");
     }
+
     if (selectedJob.month) {
       setMode("time");
     } else {
       setMode("condition");
     }
+
     setFileMode(false);
     setRoute(selectedJob.route);
     setIsEditting(true);
@@ -60,9 +63,8 @@ const Table = ({
   const handleDeleteClick = (e) => {
     const requestJobDelete = async () => {
       await axios
-        .delete(`http://localhost:5050/job?id=${e.target.id}`)
+        .delete(`http://localhost:5050/job?id=${e.target.name}`)
         .then((res) => {
-          console.log(e.target);
           setJobs(res.data);
         });
     };
