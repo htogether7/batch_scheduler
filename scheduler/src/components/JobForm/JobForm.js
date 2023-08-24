@@ -135,25 +135,29 @@ const JobForm = ({
       alert("같은 이름을 가진 작업이 존재합니다!");
       return;
     }
-    axios
-      .put(`http://localhost:5050/job?id=${selectedId}`, {
-        month: monthInput,
-        day: dayInput,
-        hour: hourInput,
-        minute: minuteInput,
-        route: route,
-        pre_condition: selectedCondition,
-        name: nameInput,
-      })
-      .then((res) => {
-        setJobs(res.data);
-        setIsEditting(false);
-        setNameInput("");
-        resetTimeInput();
-        setRoute("");
-        setSelectedCondition("");
-        setGraph([]);
-      });
+    if (validateTime(monthInput, dayInput, hourInput, minuteInput)) {
+      axios
+        .put(`http://localhost:5050/job?id=${selectedId}`, {
+          month: monthInput,
+          day: dayInput,
+          hour: hourInput,
+          minute: minuteInput,
+          route: route,
+          pre_condition: selectedCondition,
+          name: nameInput,
+        })
+        .then((res) => {
+          setJobs(res.data);
+          setIsEditting(false);
+          setNameInput("");
+          resetTimeInput();
+          setRoute("");
+          setSelectedCondition("");
+          setGraph([]);
+        });
+    } else {
+      alert("시간을 다시한번 확인해주세요.");
+    }
   };
 
   const handleFileChange = (e) => {
