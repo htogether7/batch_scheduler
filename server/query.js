@@ -72,7 +72,7 @@ const checkPreCondition = (name) => {
 };
 
 const refFlow = (name) => {
-  return `select * from flow where process=${name} || pre_condition=${name}`;
+  return `select * from flow where (process="${name}" || pre_condition="${name}")`;
 };
 
 module.exports = {
