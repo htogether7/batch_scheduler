@@ -135,7 +135,11 @@ const JobForm = ({
       alert("같은 이름을 가진 작업이 존재합니다!");
       return;
     }
-    if (validateTime(monthInput, dayInput, hourInput, minuteInput)) {
+    if (
+      (mode === "time" &&
+        validateTime(monthInput, dayInput, hourInput, minuteInput)) ||
+      mode === "condition"
+    ) {
       axios
         .put(`http://localhost:5050/job?id=${selectedId}`, {
           month: monthInput,
@@ -156,7 +160,7 @@ const JobForm = ({
           setGraph([]);
         });
     } else {
-      alert("시간을 다시한번 확인해주세요.");
+      alert(`시간을 다시한번 확인해주세요.`);
     }
   };
 
@@ -186,6 +190,7 @@ const JobForm = ({
               required
               onChange={handleNameInput}
               value={nameInput}
+              disabled={isEditting ? true : false}
             />
           </div>
           <div>
