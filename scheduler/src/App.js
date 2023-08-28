@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import JobForm from "./components/JobForm/JobForm";
 import Table from "./components/Table/Table";
 import Flow from "./components/Flow/Flow";
+import Log from "./components/Log/Log";
 // import TermForm from "./components/TermForm/TermForm";
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
   const [pageNum, setPageNum] = useState(0);
   const [selectedNode, setSelectedNode] = useState("");
   const [graph, setGraph] = useState([]);
+  const [log, setLog] = useState([]);
 
   useEffect(() => {
     axios
@@ -89,6 +91,7 @@ function App() {
             setGraph={setGraph}
           />
           <Flow selectedNode={selectedNode} graph={graph} />
+          <Log log={log} setLog={setLog} />
         </div>
       </div>
     </div>

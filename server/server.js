@@ -6,6 +6,7 @@ const mysql2 = require("mysql2/promise");
 const bodyParser = require("body-parser");
 const { execSync } = require("child_process");
 const { Heap } = require("./heap.js");
+const fs = require("fs");
 const {
   blockedExecute,
   isTimePassed,
@@ -14,6 +15,7 @@ const {
   mustBeExecuted,
   getTimeList,
   totalExecute,
+  infiniteCheck,
 } = require("./func.js");
 
 const {
@@ -161,57 +163,15 @@ app.get("/flow", (req, res) => {
   });
 });
 
+app.get("/log", (req, res) => {
+  fs.readFile("../log/log.txt", "utf-8", (err, data) => {
+    const logArray = data.toString().split("\n");
+    res.json(logArray.slice(logArray.length - 20, logArray.length));
+  });
+});
+
 app.listen(port, () => {
   console.log(`express is running on ${port}`);
 });
-
-const infiniteCheck = async () => {
-  while (true) {
-    await new Promise((r) => setTimeout(r, 20000)).then(() => {
-      let jobList = [];
-      console.log("batch!!!", Date.now());
-      connection.query(refJobInfoJoinWithExecutionTime, (err, result) => {
-        if (err) throw err;
-        else {
-          const now_to_date_format = new Date(Date.now());
-          const heap = new Heap();
-          jobList = result;
-          for (let job of jobList) {
-            if (job.month) {
-              if (!job.is_repeat) {
-                if (
-                  isTimePassed(getTimeList(now_to_date_format), [
-                    job.month,
-                    job.day,
-                    job.hour,
-                    job.minute,
-                  ]) &&
-                  mustBeExecuted(job)
-                ) {
-                  heap.heappush(job);
-                }
-              } else {
-                if (
-                  isTimeMatched(getTimeList(now_to_date_format), [
-                    job.month,
-                    job.day,
-                    job.hour,
-                    job.minute,
-                  ]) &&
-                  mustBeExecuted(job)
-                ) {
-                  heap.heappush(job);
-                }
-              }
-            }
-          }
-
-          if (heap.getLength() === 0) console.log("nothing to be executed!");
-          else totalExecute(heap);
-        }
-      });
-    });
-  }
-};
 
 infiniteCheck();
