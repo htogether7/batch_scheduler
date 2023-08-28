@@ -58,11 +58,17 @@ const calExecutionTime = (job, time) => {
   UPDATE execution_count = execution_count + 1, expected_time = ((expected_time * execution_count)+${time}) / (execution_count + 1);`;
 };
 
+// const refJobInfoJoinWithFlow = (job) => {
+//   return `select * from job_info
+//     join flow
+//     on job_info.name = flow.process
+//     where flow.pre_condition = "${job.name}"`;
+// };
+
 const refJobInfoJoinWithFlow = (job) => {
-  return `select * from job_info
-    join flow 
-    on job_info.name = flow.process
-    where flow.pre_condition = "${job.name}"`;
+  return `select * from (select * from job_info join expected_execution_time on job_info.enrolled_time = expected_execution_time.id) as T
+join flow on T.name = flow.process
+where flow.pre_condition = "${job.name}"`;
 };
 
 const refJobInfoJoinWithExecutionTime = `select * from job_info join expected_execution_time on job_info.enrolled_time = expected_execution_time.id;`;
